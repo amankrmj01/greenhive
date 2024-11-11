@@ -1,34 +1,54 @@
-import { type ClientSchema, a, defineData, defineStorage } from '@aws-amplify/backend';
+import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
 const schema = a
   .schema({
+    User: a // New User model
+      .model({
+        userId: a.id().required(),
+        name: a.string(),
+        greenhouses: a.hasMany('Greenhouse', 'greenhouseUserId'), // User has many Greenhouses
+      })
+      .identifier(['userId']),
     Greenhouse: a
       .model({
         greenhouseId: a.id().required(),
         name: a.string().required(),
-        location: a.geoJsonPoint().required(),
-        ownerId: a.id(),
-        devices: a.hasMany('Device', 'greenhouseId'),
-        sensors: a.hasMany('SensorData', 'greenhouseId'),
+        cropName: a.string(),
+        cropTimePeriod: a.int(),
+        isActive: a.boolean().default(true),
+        greenhouseUserId: a.id(), // Connect to User
+        user: a.belongsTo('User', 'userId', fields: ['greenhouseUserId']), // Belongs to User
+        microcontroller: a.hasOne('Microcontroller', 'microcontrollerGreenhouseId'), // Has one microcontroller for now
       })
       .identifier(['greenhouseId']),
-
+    Microcontroller: a // New Microcontroller model
+      .model({
+        microcontrollerId: a.id().required(),
+        deviceId: a.string().required(),
+        // ...other microcontroller fields, e.g., model, firmware version, etc.
+        sensorData: a.hasMany('SensorData', 'sensorDataMicrocontrollerId'), // Microcontroller has many SensorData
+        devices: a.hasMany('Device', 'deviceMicrocontrollerId'), // Microcontroller has many devices
+        microcontrollerGreenhouseId: a.id(),// Connect to Greenhouse
+        greenhouse: a
+            .belongsTo('Greenhouse', 'greenhouseId', fields: ['microcontrollerGreenhouseId']),
+      })
+      .identifier(['microcontrollerId']),
     Device: a
       .model({
         deviceId: a.id().required(),
-        greenhouseId: a.id().required(),
         deviceType: a.enum(['FAN', 'LIGHT', 'WATER_PUMP']).required(),
         status: a.enum(['ON', 'OFF', 'AUTO']).default('OFF'),
         fanSpeedSetting: a.int().range(0, 100),
         lightIntensitySetting: a.int().range(0, 100),
-        greenhouse: a.belongsTo('Greenhouse', 'greenhouseId'),
+        deviceMicrocontrollerId: a.id(), //Connect to Microcontroller
+        microcontroller: a.belongsTo('Microcontroller','microcontrollerId', fields: ['deviceMicrocontrollerId']),
       })
       .identifier(['deviceId']),
+
 
     SensorData: a
       .model({
         dataId: a.id().required(),
-        greenhouseId: a.id().required(),
         timestamp: a.timestamp().required(),
         temperature: a.float().required(),
         humidity: a.float().required(),
@@ -38,61 +58,37 @@ const schema = a
         modelRecommendation: a.customType({
           recommendedFanSpeed: a.float(),
           recommendedLightIntensity: a.float(),
+          // ... other recommendations
         }),
         actualFanSpeed: a.float(),
         actualLightIntensity: a.float(),
-        greenhouse: a.belongsTo('Greenhouse', 'greenhouseId'),
+        sensorDataMicrocontrollerId: a.id(), // Connect to Microcontroller
+        microcontroller: a.belongsTo('Microcontroller', 'microcontrollerId', fields: ['sensorDataMicrocontrollerId']),
+
       })
       .identifier(['dataId']),
+
+
   })
   .authorization((allow) => [
-    allow.publicApiKey(),
     allow.owner(),
-    allow.authenticated(),
-    allow.guest(),
+    allow.private(),
+    allow.public(),
   ]);
+
+
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'apiKey', // Or 'userPools' for Cognito
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
+    defaultAuthorizationMode: 'owner', // Or 'userPools' if using Cognito
     userPoolsAuthorizationMode: {       // For Cognito User Pools
       userAttributes: ['email'],
     },
   },
 });
 
-export const storage = defineStorage({
-  name: 'greenhouseStorage',  // Replace with a descriptive name
-  access: (allow) => ({
-    'profile-pictures/{entity_id}/*': [
-      allow.guest.to(['read']),
-      allow.entity('identity').to(['read', 'write', 'delete']),
-    ],
 
-    // Public read access, authenticated write - consider guest write restrictions
-    'picture-submissions/*': [
-      allow.authenticated.to(['read', 'write']),
-      allow.guest().to(['read']),  // Only read for guests (more secure)
-    ],
-
-    'greenhouse-info/{greenhouse_id}/*': [
-      allow.owner().to(['read', 'write', 'delete']),
-    ],
-
-    'sensor-data-exports/{greenhouse_id}/*': [
-      allow.owner().to(['read', 'write', 'delete']),
-    ],
-
-    'greenhouse-images/{greenhouse_id}/*': [
-      allow.owner().to(['read', 'write', 'delete']),
-    ],
-  }),
-});
-
-export const { Greenhouse, Device, SensorData } = data.models;
+export const { User, Greenhouse, Microcontroller, Device, SensorData } = data.models;
