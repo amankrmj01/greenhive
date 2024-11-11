@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -62,7 +61,6 @@ class AddGreenHouseScreen extends GetView<AddGreenHouseController> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter time period';
                     }
-
                     if (int.tryParse(value) == null) {
                       return 'Invalid number format';
                     }
@@ -79,7 +77,9 @@ class AddGreenHouseScreen extends GetView<AddGreenHouseController> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: controller.saveGreenhouse,
+                  onPressed: () {
+                    controller.saveGreenhouse();
+                  },
                   child: const Text('Save'),
                 ),
               ],
