@@ -3,8 +3,6 @@ import 'package:greenhive/infrastructure/dal/services/aws/session_service.dart';
 import 'package:greenhive/infrastructure/navigation/routes.dart';
 import 'package:get/get.dart';
 
-import '../../../infrastructure/dal/services/aws/aws_service.dart';
-
 class SplashController extends GetxController {
   final SessionService _sessionService = GetIt.instance<SessionService>();
 

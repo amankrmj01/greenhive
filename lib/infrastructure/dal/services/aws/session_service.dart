@@ -1,7 +1,5 @@
 import 'package:amplify_core/amplify_core.dart';
 
-import 'aws_service.dart';
-
 class SessionService {
   Future<bool> fetchAuthSession() async {
     try {

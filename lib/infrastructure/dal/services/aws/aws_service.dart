@@ -1,7 +1,4 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:get_it/get_it.dart';
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
-import '../../daos/data/secure_storage.dart';
 import 'sign_in_service.dart';
 import 'sign_up_service.dart';
 import 'sign_out_service.dart';

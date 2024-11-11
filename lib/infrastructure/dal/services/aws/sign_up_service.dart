@@ -5,9 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../presentation/auth/toast_message.dart';
-import '../../../navigation/routes.dart';
 import '../auth/sign_up.dart';
-import 'aws_service.dart';
 
 class SignUpService implements ISignUpService {
   final toastMessage = Rx<ToastMessage?>(null);

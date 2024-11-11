@@ -14,11 +14,6 @@ class SignUpController extends GetxController {
   final signUpService = GetIt.instance<SignUpService>();
 
   @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
   void onClose() {
     fullName.dispose();
     username.dispose();

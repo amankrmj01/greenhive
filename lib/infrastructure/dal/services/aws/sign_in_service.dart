@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../../../navigation/routes.dart';
 import '../auth/sign_in.dart';
-import 'aws_service.dart';
 
 class SignInService implements ISignInService {
   @override

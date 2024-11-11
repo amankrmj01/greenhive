@@ -16,9 +16,4 @@ class UserController extends GetxController {
       Get.snackbar('Error', e.toString());
     }
   }
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
 }
