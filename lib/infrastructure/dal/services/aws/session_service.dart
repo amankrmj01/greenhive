@@ -1,14 +1,11 @@
-import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_core/amplify_core.dart';
 
+import 'aws_service.dart';
+
 class SessionService {
-  final AmplifyAuthCognito _auth;
-
-  SessionService(this._auth);
-
   Future<bool> fetchAuthSession() async {
     try {
-      final result = await _auth.fetchAuthSession();
+      final result = await Amplify.Auth.fetchAuthSession();
       safePrint('User is signed in: ${result.isSignedIn}');
       return result.isSignedIn;
     } on AuthException catch (e) {

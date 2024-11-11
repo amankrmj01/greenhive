@@ -7,9 +7,6 @@ import '../../../dal/services/aws/sign_up_service.dart';
 class SignUpControllerBinding extends Bindings {
   @override
   void dependencies() {
-    final signUpService = GetIt.instance<SignUpService>();
-    final signUpController = SignUpController();
-    signUpController.setSignUpService(signUpService);
-    Get.put(signUpController);
+    Get.put(SignUpController());
   }
 }

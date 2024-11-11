@@ -6,9 +6,7 @@ class SecureStorage implements SecureStorageInterface {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   @override
-  Future<void> write({required String key, required String value}) async {
-    await _secureStorage.write(key: key, value: value);
-  }
+  Future<void> write({required String key, required String value}) async {}
 
   @override
   Future<void> delete({required String key}) async {

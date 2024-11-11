@@ -48,6 +48,9 @@ class CSearchBar extends StatelessWidget {
               16.widthBox,
               Expanded(
                 child: TextField(
+                  onTapOutside: (_) {
+                    FocusScope.of(context).unfocus();
+                  },
                   controller: controller.searchController,
                   decoration: const InputDecoration(
                     hintText: 'Search',

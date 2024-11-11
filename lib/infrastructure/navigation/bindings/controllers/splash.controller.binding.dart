@@ -7,9 +7,6 @@ import '../../../dal/services/aws/session_service.dart';
 class SplashControllerBinding extends Bindings {
   @override
   void dependencies() {
-    final sessionService = getIt<SessionService>();
-    final splashController = SplashController();
-    splashController.setSessionService(sessionService);
-    Get.put(splashController);
+    Get.put(SplashController());
   }
 }

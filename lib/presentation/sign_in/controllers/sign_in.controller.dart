@@ -1,20 +1,17 @@
+import 'package:get_it/get_it.dart';
 import 'package:greenhive/infrastructure/dal/services/aws/sign_in_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../infrastructure/navigation/routes.dart';
 
 class SignInController extends GetxController {
   final username = TextEditingController();
   final password = TextEditingController();
   final otpCode = TextEditingController();
 
-  late SignInService signInService;
-
-  SignInController();
-
-  void setSignInService(SignInService service) {
-    signInService = service;
-  }
+  final SignInService signInService = GetIt.instance<SignInService>();
 
   @override
   void onClose() {
@@ -25,6 +22,13 @@ class SignInController extends GetxController {
   }
 
   Future<void> signInUser(String username, String password) async {
-    await signInService.signInUser(username: username, password: password);
+    final isSignedIn = await signInService.signInUser(
+      username: username,
+      password: password,
+    );
+
+    if (isSignedIn) {
+      Get.offAllNamed(Routes.HOME);
+    }
   }
 }

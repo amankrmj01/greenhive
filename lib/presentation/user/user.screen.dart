@@ -16,7 +16,11 @@ class UserScreen extends GetView<UserController> {
       body: Center(
         child: Column(
           children: [
-            ElevatedButton(onPressed: () {}, child: const Text('LogOut'))
+            ElevatedButton(
+                onPressed: () {
+                  controller.signOut();
+                },
+                child: const Text('LogOut'))
           ],
         ),
       ),

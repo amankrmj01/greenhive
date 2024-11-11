@@ -4,40 +4,39 @@ import 'package:get/get.dart';
 
 import '../../../navigation/routes.dart';
 import '../auth/sign_in.dart';
+import 'aws_service.dart';
 
 class SignInService implements ISignInService {
-  final AmplifyAuthCognito _auth;
-
-  SignInService(this._auth);
-
   @override
-  Future<void> signInUser({
+  Future<bool> signInUser({
     required String username,
     required String password,
   }) async {
     try {
-      final result = await _auth.signIn(
+      final result = await Amplify.Auth.signIn(
         username: username,
         password: password,
       );
-      await _handleSignInResult(result);
+      return await _handleSignInResult(result);
     } on AuthException catch (e) {
       safePrint('Error signing in: ${e.message}');
+      return false;
     }
   }
 
-  Future<void> _handleSignInResult(SignInResult result) async {
+  Future<bool> _handleSignInResult(SignInResult result) async {
     switch (result.nextStep.signInStep) {
       case AuthSignInStep.confirmSignInWithOtpCode:
         safePrint('Prompt for OTP');
         // _promptForOtpCode();
-        break;
+        return false;
       case AuthSignInStep.done:
         safePrint('Sign in is complete');
         Get.offNamed(Routes.HOME);
-        break;
+        return true;
       default:
         safePrint('Unhandled sign-in step: ${result.nextStep.signInStep}');
+        return false;
     }
   }
 }

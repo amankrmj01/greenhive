@@ -9,10 +9,11 @@ import 'infrastructure/navigation/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AWSServiceC.setupServiceLocator();
+
   var initialRoute = await Routes.initialRoute;
   try {
     await _configureAmplify();
+    AWSServiceC.setupServiceLocator();
     runApp(Main(initialRoute));
   } on AmplifyException catch (e) {
     runApp(Text("Error configuring Amplify: ${e.message}"));

@@ -7,12 +7,10 @@ import 'package:get/get.dart';
 import '../../../../presentation/auth/toast_message.dart';
 import '../../../navigation/routes.dart';
 import '../auth/sign_up.dart';
+import 'aws_service.dart';
 
 class SignUpService implements ISignUpService {
   final toastMessage = Rx<ToastMessage?>(null);
-  final AmplifyAuthCognito _auth;
-
-  SignUpService(this._auth);
 
   @override
   Future<bool> signUpUser({
@@ -27,7 +25,7 @@ class SignUpService implements ISignUpService {
         AuthUserAttributeKey.name: fullName,
         AuthUserAttributeKey.preferredUsername: username,
       };
-      final result = await _auth.signUp(
+      final result = await Amplify.Auth.signUp(
         username: email,
         password: password,
         options: SignUpOptions(
@@ -61,7 +59,7 @@ class SignUpService implements ISignUpService {
               color: Colors.white),
         );
         safePrint('Sign up is complete');
-        Get.toNamed(Routes.HOME);
+
         return false;
       default:
         return false;

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import '../../auth/toast_message.dart';
 import '../../../infrastructure/dal/services/aws/sign_up_service.dart';
+import '../../../infrastructure/navigation/routes.dart';
 
 class OtpController extends GetxController {
   final otpController = TextEditingController();
@@ -34,9 +35,12 @@ class OtpController extends GetxController {
       );
       return;
     }
-    await signUpService.confirmUser(
+    final result = await signUpService.confirmUser(
       username: username,
       confirmationCode: confirmationCode,
     );
+    if (!result) {
+      Get.offAllNamed(Routes.HOME);
+    }
   }
 }

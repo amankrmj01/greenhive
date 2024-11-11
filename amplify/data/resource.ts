@@ -1,53 +1,98 @@
-import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { type ClientSchema, a, defineData, defineStorage } from '@aws-amplify/backend';
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any unauthenticated user can "create", "read", "update", 
-and "delete" any "Todo" records.
-=========================================================================*/
-const schema = a.schema({
-  Todo: a
-    .model({
-      content: a.string(),
-    })
-    .authorization((allow) => [allow.guest()]),
-});
+const schema = a
+  .schema({
+    Greenhouse: a
+      .model({
+        greenhouseId: a.id().required(),
+        name: a.string().required(),
+        location: a.geoJsonPoint().required(),
+        ownerId: a.id(),
+        devices: a.hasMany('Device', 'greenhouseId'),
+        sensors: a.hasMany('SensorData', 'greenhouseId'),
+      })
+      .identifier(['greenhouseId']),
+
+    Device: a
+      .model({
+        deviceId: a.id().required(),
+        greenhouseId: a.id().required(),
+        deviceType: a.enum(['FAN', 'LIGHT', 'WATER_PUMP']).required(),
+        status: a.enum(['ON', 'OFF', 'AUTO']).default('OFF'),
+        fanSpeedSetting: a.int().range(0, 100),
+        lightIntensitySetting: a.int().range(0, 100),
+        greenhouse: a.belongsTo('Greenhouse', 'greenhouseId'),
+      })
+      .identifier(['deviceId']),
+
+    SensorData: a
+      .model({
+        dataId: a.id().required(),
+        greenhouseId: a.id().required(),
+        timestamp: a.timestamp().required(),
+        temperature: a.float().required(),
+        humidity: a.float().required(),
+        co2: a.float(),
+        light: a.float(),
+        soilMoisture: a.float(),
+        modelRecommendation: a.customType({
+          recommendedFanSpeed: a.float(),
+          recommendedLightIntensity: a.float(),
+        }),
+        actualFanSpeed: a.float(),
+        actualLightIntensity: a.float(),
+        greenhouse: a.belongsTo('Greenhouse', 'greenhouseId'),
+      })
+      .identifier(['dataId']),
+  })
+  .authorization((allow) => [
+    allow.publicApiKey(),
+    allow.owner(),
+    allow.authenticated(),
+    allow.guest(),
+  ]);
 
 export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'iam',
+    defaultAuthorizationMode: 'apiKey', // Or 'userPools' for Cognito
+    apiKeyAuthorizationMode: {
+      expiresInDays: 30,
+    },
+    userPoolsAuthorizationMode: {       // For Cognito User Pools
+      userAttributes: ['email'],
+    },
   },
 });
 
-/*== STEP 2 ===============================================================
-Go to your frontend source code. From your client-side code, generate a
-Data client to make CRUDL requests to your table. (THIS SNIPPET WILL ONLY
-WORK IN THE FRONTEND CODE FILE.)
+export const storage = defineStorage({
+  name: 'greenhouseStorage',  // Replace with a descriptive name
+  access: (allow) => ({
+    'profile-pictures/{entity_id}/*': [
+      allow.guest.to(['read']),
+      allow.entity('identity').to(['read', 'write', 'delete']),
+    ],
 
-Using JavaScript or Next.js React Server Components, Middleware, Server 
-Actions or Pages Router? Review how to generate Data clients for those use
-cases: https://docs.amplify.aws/gen2/build-a-backend/data/connect-to-API/
-=========================================================================*/
+    // Public read access, authenticated write - consider guest write restrictions
+    'picture-submissions/*': [
+      allow.authenticated.to(['read', 'write']),
+      allow.guest().to(['read']),  // Only read for guests (more secure)
+    ],
 
-/*
-"use client"
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
+    'greenhouse-info/{greenhouse_id}/*': [
+      allow.owner().to(['read', 'write', 'delete']),
+    ],
 
-const client = generateClient<Schema>() // use this Data client for CRUDL requests
-*/
+    'sensor-data-exports/{greenhouse_id}/*': [
+      allow.owner().to(['read', 'write', 'delete']),
+    ],
 
-/*== STEP 3 ===============================================================
-Fetch records from the database and use them in your frontend component.
-(THIS SNIPPET WILL ONLY WORK IN THE FRONTEND CODE FILE.)
-=========================================================================*/
+    'greenhouse-images/{greenhouse_id}/*': [
+      allow.owner().to(['read', 'write', 'delete']),
+    ],
+  }),
+});
 
-/* For example, in a React component, you can use this snippet in your
-  function's RETURN statement */
-// const { data: todos } = await client.models.Todo.list()
-
-// return <ul>{todos.map(todo => <li key={todo.id}>{todo.content}</li>)}</ul>
+export const { Greenhouse, Device, SensorData } = data.models;

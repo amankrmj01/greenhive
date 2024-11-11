@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
 import '../../../infrastructure/dal/services/aws/sign_up_service.dart';
 import '../../../infrastructure/navigation/routes.dart';
 
@@ -10,22 +11,21 @@ class SignUpController extends GetxController {
   final confirmPassword = TextEditingController();
   final email = TextEditingController();
 
-  late SignUpService signUpService;
+  final signUpService = GetIt.instance<SignUpService>();
 
-  SignUpController();
-
-  void setSignUpService(SignUpService service) {
-    signUpService = service;
+  @override
+  void onInit() {
+    super.onInit();
   }
 
   @override
   void onClose() {
-    super.onClose();
     fullName.dispose();
     username.dispose();
     password.dispose();
     confirmPassword.dispose();
     email.dispose();
+    super.onClose();
   }
 
   Future<void> signUpUser({

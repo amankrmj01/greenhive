@@ -1,13 +1,12 @@
+import 'package:get_it/get_it.dart';
 import 'package:greenhive/infrastructure/dal/services/aws/session_service.dart';
 import 'package:greenhive/infrastructure/navigation/routes.dart';
 import 'package:get/get.dart';
 
-class SplashController extends GetxController {
-  late SessionService _sessionService;
+import '../../../infrastructure/dal/services/aws/aws_service.dart';
 
-  void setSessionService(SessionService service) {
-    _sessionService = service;
-  }
+class SplashController extends GetxController {
+  final SessionService _sessionService = GetIt.instance<SessionService>();
 
   @override
   Future<void> onInit() async {
