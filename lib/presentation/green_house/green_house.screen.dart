@@ -28,14 +28,20 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
             ),
           ),
           SliverToBoxAdapter(
-            child: _climateInfo(),
+            child: Column(
+              children: [
+                _climateInfo(),
+                16.heightBox,
+                _deviceControls(),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Extracted the title widget for better organization
+  // AppBar title widget for displaying greenhouse details
   Widget _buildAppBarTitle(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
@@ -52,16 +58,16 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                 : Colors.white.withOpacity(0.5),
           ),
           child: controller.hide.value
-              ? const Text('name')
+              ? const Text('Greenhouse Name')
               : const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('name',
+                    Text('Greenhouse Name',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     SizedBox(height: 8),
-                    Text('description', style: TextStyle(fontSize: 14)),
+                    Text('Description', style: TextStyle(fontSize: 14)),
                   ],
                 ),
         ),
@@ -69,11 +75,11 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
     );
   }
 
+  // Sensor data widget
   Widget _climateInfo() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       width: 354.20,
-      // height: 135.30,
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -96,16 +102,22 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildData('title', const Icon(Icons.hot_tub), 'data'),
-              _buildData('title', const Icon(Icons.hot_tub), 'data'),
+              _buildData(
+                  'Temperature',
+                  Icon(Icons.thermostat, color: Colors.red),
+                  controller.temperature),
+              _buildData('Humidity', Icon(Icons.water_drop, color: Colors.blue),
+                  controller.humidity),
             ],
           ),
           16.heightBox,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildData('title', const Icon(Icons.hot_tub), 'data'),
-              _buildData('title', const Icon(Icons.hot_tub), 'data'),
+              _buildData(
+                  'CO2', Icon(Icons.air, color: Colors.green), controller.co2),
+              _buildData('Light', Icon(Icons.wb_sunny, color: Colors.yellow),
+                  controller.light),
             ],
           ),
           16.heightBox,
@@ -114,24 +126,75 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
     );
   }
 
-  Widget _buildData(
-    String title,
-    Icon icon,
-    String data,
-  ) {
+  // Device controls widget for Fan, Light, and Water Pump
+  Widget _deviceControls() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      width: 354.20,
+      decoration: ShapeDecoration(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(19.80),
+        ),
+        shadows: const [
+          BoxShadow(
+            color: Color(0x3F000000),
+            blurRadius: 4.40,
+            offset: Offset(0, 4.40),
+            spreadRadius: 0,
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Device Controls',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
+              .p16(),
+          _deviceControlRow('Fan', controller.fanStatus,
+              (value) => controller.updateFanStatus(value)),
+          _deviceControlRow('Light', controller.lightStatus,
+              (value) => controller.updateLightStatus(value)),
+          _deviceControlRow('Water Pump', controller.waterPumpStatus,
+              (value) => controller.updateWaterPumpStatus(value)),
+          16.heightBox,
+        ],
+      ),
+    );
+  }
+
+  // Reusable row for individual device control
+  Widget _deviceControlRow(
+      String label, RxString status, Function(String) onChanged) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 16)),
+        DropdownButton<String>(
+          borderRadius: BorderRadius.circular(16),
+          value: status.value,
+          items: const [
+            DropdownMenuItem(value: 'ON', child: Text('ON')),
+            DropdownMenuItem(value: 'OFF', child: Text('OFF')),
+            DropdownMenuItem(value: 'AUTO', child: Text('AUTO')),
+          ],
+          onChanged: (_) {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildData(String title, Icon icon, RxString data) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon.icon,
-          color: icon.color,
-          size: 32,
-        ),
+        Icon(icon.icon, color: icon.color, size: 32),
         4.heightBox,
         title.text.xl2.make(),
         4.heightBox,
-        data.text.make(),
+        Obx(() => data.value.text.make()),
       ],
     );
   }

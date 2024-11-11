@@ -153,7 +153,6 @@ class HomeScreen extends GetView<HomeController> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       'Green House ${index + 1}'.text.xl.make(),
-                                      'Location: ${index + 1}'.text.make(),
                                     ],
                                   ),
                                   const Spacer(),
