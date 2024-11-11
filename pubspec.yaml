@@ -49,6 +49,7 @@ dependencies:
   flutter_secure_storage: ^9.2.2
   amplify_api: ^2.5.0
   amplify_storage_s3: ^2.5.0
+  amplify_datastore: ^2.5.0
 
 dev_dependencies:
   flutter_test:
