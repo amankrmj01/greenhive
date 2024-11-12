@@ -90,6 +90,13 @@ class HomeScreen extends GetView<HomeController> {
                                     ),
                                     color: Colors.white,
                                   ),
+                                  IconButton(
+                                    onPressed: () {
+                                      controller.fetchGreenhouses();
+                                    },
+                                    icon: const Icon(Icons.refresh),
+                                    color: Colors.white,
+                                  )
                                 ],
                               ),
                             ],
@@ -99,85 +106,110 @@ class HomeScreen extends GetView<HomeController> {
                         top: 16,
                       ),
                       const CSearchBar().paddingOnly(bottom: 16),
-                      // 0.heightBox,
                     ],
                   ),
                 ),
-                SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    childCount: 15,
-                    (context, index) {
-                      return InkWell(
-                        onTap: () {
-                          Get.toNamed(Routes.GREEN_HOUSE, arguments: []);
-                        },
-                        child: Container(
-                          width: 322,
-                          height: 200,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18),
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return const SliverFillRemaining(
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+
+                  if (controller.greenhouses.isEmpty) {
+                    return const SliverFillRemaining(
+                      child: Center(child: Text('No greenhouses found.')),
+                    );
+                  }
+
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final greenhouse = controller.greenhouses[index];
+                        return InkWell(
+                          onTap: () {
+                            Get.toNamed(Routes.GREEN_HOUSE,
+                                arguments: greenhouse);
+                          },
+                          child: Container(
+                            width: 322,
+                            height: 200,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
                             ),
-                            shadows: const [
-                              BoxShadow(
-                                color: Color(0x3F000000),
-                                blurRadius: 4,
-                                offset: Offset(0, 4),
-                                spreadRadius: 0,
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              10.heightBox,
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.asset(
-                                  Images.greenHouse,
-                                  width: 322,
-                                  height: 120,
-                                  fit: BoxFit.cover,
-                                ),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
                               ),
-                              10.heightBox,
-                              Row(
-                                children: [
-                                  16.widthBox,
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      'Green House ${index + 1}'.text.xl.make(),
-                                    ],
+                              shadows: const [
+                                BoxShadow(
+                                  color: Color(0x3F000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                10.heightBox,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    Images.greenHouse,
+                                    width: 322,
+                                    height: 120,
+                                    fit: BoxFit.cover,
                                   ),
-                                  const Spacer(),
-                                  Row(
-                                    children: [
-                                      'Active'.text.make(),
-                                      IconButton(
-                                        onPressed: () {},
-                                        icon: const CircleAvatar(
-                                          maxRadius: 8,
-                                          backgroundColor: Colors.teal,
+                                ),
+                                10.heightBox,
+                                Row(
+                                  children: [
+                                    16.widthBox,
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          greenhouse.name!,
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  16.widthBox,
-                                ],
-                              )
-                            ],
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    Row(
+                                      children: [
+                                        Text(greenhouse.isActive!
+                                            ? 'Active'
+                                            : 'Inactive'),
+                                        IconButton(
+                                          onPressed: () {},
+                                          icon: CircleAvatar(
+                                            maxRadius: 8,
+                                            backgroundColor:
+                                                greenhouse.isActive!
+                                                    ? Colors.green
+                                                    : Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    16.widthBox,
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                        );
+                      },
+                      childCount: controller.greenhouses.length,
+                    ),
+                  );
+                }),
               ],
             ),
           )

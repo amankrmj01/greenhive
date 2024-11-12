@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:greenhive/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,19 +58,19 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                 ? Colors.transparent
                 : Colors.white.withOpacity(0.5),
           ),
-          child: controller.hide.value
+          child: Obx(() => controller.hide.value
               ? const Text('Greenhouse Name')
-              : const Column(
+              : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Greenhouse Name',
-                        style: TextStyle(
+                    Text(Get.arguments.name,
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     SizedBox(height: 8),
                     Text('Description', style: TextStyle(fontSize: 14)),
                   ],
-                ),
+                )),
         ),
       ),
     );
@@ -94,34 +95,38 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
           )
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          16.heightBox,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildData(
-                  'Temperature',
-                  Icon(Icons.thermostat, color: Colors.red),
-                  controller.temperature),
-              _buildData('Humidity', Icon(Icons.water_drop, color: Colors.blue),
-                  controller.humidity),
-            ],
-          ),
-          16.heightBox,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildData(
-                  'CO2', Icon(Icons.air, color: Colors.green), controller.co2),
-              _buildData('Light', Icon(Icons.wb_sunny, color: Colors.yellow),
-                  controller.light),
-            ],
-          ),
-          16.heightBox,
-        ],
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            16.heightBox,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildData(
+                    'Temperature',
+                    Icon(Icons.thermostat, color: Colors.red),
+                    controller.temperature),
+                _buildData(
+                    'Humidity',
+                    Icon(Icons.water_drop, color: Colors.blue),
+                    controller.humidity),
+              ],
+            ),
+            16.heightBox,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildData('CO2', Icon(Icons.air, color: Colors.green),
+                    controller.co2),
+                _buildData('Light', Icon(Icons.wb_sunny, color: Colors.yellow),
+                    controller.light),
+              ],
+            ),
+            16.heightBox,
+          ],
+        ),
       ),
     );
   }
@@ -152,12 +157,27 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
           const Text('Device Controls',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
               .p16(),
-          _deviceControlRow('Fan', controller.fanStatus,
-              (value) => controller.updateFanStatus(value)),
-          _deviceControlRow('Light', controller.lightStatus,
-              (value) => controller.updateLightStatus(value)),
-          _deviceControlRow('Water Pump', controller.waterPumpStatus,
-              (value) => controller.updateWaterPumpStatus(value)),
+          _deviceControlRow(
+            'Fan',
+            controller.fanStatus,
+            (value) => controller.updateFanStatus(
+              value!,
+            ),
+          ),
+          _deviceControlRow(
+            'Light',
+            controller.lightStatus,
+            (value) => controller.updateLightStatus(
+              value!,
+            ),
+          ),
+          _deviceControlRow(
+            'Water Pump',
+            controller.waterPumpStatus,
+            (value) => controller.updateWaterPumpStatus(
+              value!,
+            ),
+          ),
           16.heightBox,
         ],
       ),
@@ -166,20 +186,30 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
 
   // Reusable row for individual device control
   Widget _deviceControlRow(
-      String label, RxString status, Function(String) onChanged) {
+      String label, RxString status, void Function(String?) onChanged) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: const TextStyle(fontSize: 16)),
-        DropdownButton<String>(
-          borderRadius: BorderRadius.circular(16),
-          value: status.value,
-          items: const [
-            DropdownMenuItem(value: 'ON', child: Text('ON')),
-            DropdownMenuItem(value: 'OFF', child: Text('OFF')),
-            DropdownMenuItem(value: 'AUTO', child: Text('AUTO')),
-          ],
-          onChanged: (_) {},
+        Obx(
+          () {
+            // Debugging print to verify the current value of status
+            // safePrint("Current status for $label: ${status.value}");
+            return DropdownButton<String>(
+              borderRadius: BorderRadius.circular(16),
+              value: status.value, // Ensure this matches one of the item values
+              items: const [
+                DropdownMenuItem(value: 'ON', child: Text('ON')),
+                DropdownMenuItem(value: 'OFF', child: Text('OFF')),
+                DropdownMenuItem(value: 'AUTO', child: Text('AUTO')),
+              ],
+              onChanged: (value) {
+                if (value != null) {
+                  onChanged(value);
+                }
+              },
+            );
+          },
         ),
       ],
     );

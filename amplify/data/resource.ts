@@ -28,44 +28,30 @@ const schema = a.schema({
     Microcontroller: a
         .model({
             microcontrollerId: a.id(),
-            deviceId: a.string(),
-            sensorData: a.hasMany('SensorData', 'microcontrollerId'), // Reference the correct foreign key field in SensorData
-            devices: a.hasMany('Device', 'microcontrollerId'), // Corrected foreign key to match Device's reference
             microcontrollerGreenhouseId: a.id(), // Foreign key to Greenhouse
-            greenhouse: a.belongsTo('Greenhouse', 'microcontrollerGreenhouseId'), // Reference Greenhouse using microcontrollerGreenhouseId
-        })
-        .identifier(['microcontrollerId'])
-        .authorization((allow) => [allow.authenticated()]),
+            greenhouse: a.belongsTo('Greenhouse', 'microcontrollerGreenhouseId'), // Reference Greenhouse
 
-    Device: a
-        .model({
-            deviceId: a.id(),
-            deviceType: a.enum(['FAN', 'LIGHT', 'WATER_PUMP']),
-            status: a.enum(['ON', 'OFF', 'AUTO']),
-            fanSpeedSetting: a.integer(),
-            lightIntensitySetting: a.integer(),
-            microcontrollerId: a.id(), // Foreign key to Microcontroller
-            microcontroller: a.belongsTo('Microcontroller', 'microcontrollerId'), // Reference Microcontroller using microcontrollerId
-        })
-        .identifier(['deviceId'])
-        .authorization((allow) => [allow.authenticated()]),
-
-    SensorData: a
-        .model({
-            dataId: a.id(),
+            // Sensor Data Fields
             timestamp: a.timestamp(),
             temperature: a.float(),
             humidity: a.float(),
             co2: a.float(),
-            light: a.float(),
+            lightLevel: a.float(),
             soilMoisture: a.float(),
             modelRecommendation: a.json(), // JSON type for complex recommendation structure
             actualFanSpeed: a.float(),
             actualLightIntensity: a.float(),
-            microcontrollerId: a.id(), // Foreign key to Microcontroller
-            microcontroller: a.belongsTo('Microcontroller', 'microcontrollerId'), // Reference Microcontroller using microcontrollerId
+
+            // Device-Specific Fields
+            fanStatus: a.enum(['ON', 'OFF', 'AUTO']),  // Status for fan
+            fanSpeedSetting: a.integer(),              // Speed setting for fan
+
+            lightStatus: a.enum(['ON', 'OFF', 'AUTO']),  // Status for light
+            lightIntensitySetting: a.integer(),          // Intensity setting for light
+
+            waterPumpStatus: a.enum(['ON', 'OFF', 'AUTO']), // Status for water pump
         })
-        .identifier(['dataId'])
+        .identifier(['microcontrollerId'])
         .authorization((allow) => [allow.authenticated()]),
 });
 

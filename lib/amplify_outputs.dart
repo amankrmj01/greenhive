@@ -271,45 +271,6 @@ const amplifyConfig = r'''{
               "isRequired": true,
               "attributes": []
             },
-            "deviceId": {
-              "name": "deviceId",
-              "isArray": false,
-              "type": "String",
-              "isRequired": false,
-              "attributes": []
-            },
-            "sensorData": {
-              "name": "sensorData",
-              "isArray": true,
-              "type": {
-                "model": "SensorData"
-              },
-              "isRequired": false,
-              "attributes": [],
-              "isArrayNullable": true,
-              "association": {
-                "connectionType": "HAS_MANY",
-                "associatedWith": [
-                  "microcontrollerId"
-                ]
-              }
-            },
-            "devices": {
-              "name": "devices",
-              "isArray": true,
-              "type": {
-                "model": "Device"
-              },
-              "isRequired": false,
-              "attributes": [],
-              "isArrayNullable": true,
-              "association": {
-                "connectionType": "HAS_MANY",
-                "associatedWith": [
-                  "microcontrollerId"
-                ]
-              }
-            },
             "microcontrollerGreenhouseId": {
               "name": "microcontrollerGreenhouseId",
               "isArray": false,
@@ -331,6 +292,110 @@ const amplifyConfig = r'''{
                   "microcontrollerGreenhouseId"
                 ]
               }
+            },
+            "timestamp": {
+              "name": "timestamp",
+              "isArray": false,
+              "type": "AWSTimestamp",
+              "isRequired": false,
+              "attributes": []
+            },
+            "temperature": {
+              "name": "temperature",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "humidity": {
+              "name": "humidity",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "co2": {
+              "name": "co2",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "lightLevel": {
+              "name": "lightLevel",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "soilMoisture": {
+              "name": "soilMoisture",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "modelRecommendation": {
+              "name": "modelRecommendation",
+              "isArray": false,
+              "type": "AWSJSON",
+              "isRequired": false,
+              "attributes": []
+            },
+            "actualFanSpeed": {
+              "name": "actualFanSpeed",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "actualLightIntensity": {
+              "name": "actualLightIntensity",
+              "isArray": false,
+              "type": "Float",
+              "isRequired": false,
+              "attributes": []
+            },
+            "fanStatus": {
+              "name": "fanStatus",
+              "isArray": false,
+              "type": {
+                "enum": "MicrocontrollerFanStatus"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "fanSpeedSetting": {
+              "name": "fanSpeedSetting",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "lightStatus": {
+              "name": "lightStatus",
+              "isArray": false,
+              "type": {
+                "enum": "MicrocontrollerLightStatus"
+              },
+              "isRequired": false,
+              "attributes": []
+            },
+            "lightIntensitySetting": {
+              "name": "lightIntensitySetting",
+              "isArray": false,
+              "type": "Int",
+              "isRequired": false,
+              "attributes": []
+            },
+            "waterPumpStatus": {
+              "name": "waterPumpStatus",
+              "isArray": false,
+              "type": {
+                "enum": "MicrocontrollerWaterPumpStatus"
+              },
+              "isRequired": false,
+              "attributes": []
             },
             "createdAt": {
               "name": "createdAt",
@@ -386,288 +451,27 @@ const amplifyConfig = r'''{
             "primaryKeyFieldName": "microcontrollerId",
             "sortKeyFieldNames": []
           }
-        },
-        "Device": {
-          "name": "Device",
-          "fields": {
-            "deviceId": {
-              "name": "deviceId",
-              "isArray": false,
-              "type": "ID",
-              "isRequired": true,
-              "attributes": []
-            },
-            "deviceType": {
-              "name": "deviceType",
-              "isArray": false,
-              "type": {
-                "enum": "DeviceDeviceType"
-              },
-              "isRequired": false,
-              "attributes": []
-            },
-            "status": {
-              "name": "status",
-              "isArray": false,
-              "type": {
-                "enum": "DeviceStatus"
-              },
-              "isRequired": false,
-              "attributes": []
-            },
-            "fanSpeedSetting": {
-              "name": "fanSpeedSetting",
-              "isArray": false,
-              "type": "Int",
-              "isRequired": false,
-              "attributes": []
-            },
-            "lightIntensitySetting": {
-              "name": "lightIntensitySetting",
-              "isArray": false,
-              "type": "Int",
-              "isRequired": false,
-              "attributes": []
-            },
-            "microcontrollerId": {
-              "name": "microcontrollerId",
-              "isArray": false,
-              "type": "ID",
-              "isRequired": false,
-              "attributes": []
-            },
-            "microcontroller": {
-              "name": "microcontroller",
-              "isArray": false,
-              "type": {
-                "model": "Microcontroller"
-              },
-              "isRequired": false,
-              "attributes": [],
-              "association": {
-                "connectionType": "BELONGS_TO",
-                "targetNames": [
-                  "microcontrollerId"
-                ]
-              }
-            },
-            "createdAt": {
-              "name": "createdAt",
-              "isArray": false,
-              "type": "AWSDateTime",
-              "isRequired": false,
-              "attributes": [],
-              "isReadOnly": true
-            },
-            "updatedAt": {
-              "name": "updatedAt",
-              "isArray": false,
-              "type": "AWSDateTime",
-              "isRequired": false,
-              "attributes": [],
-              "isReadOnly": true
-            }
-          },
-          "syncable": true,
-          "pluralName": "Devices",
-          "attributes": [
-            {
-              "type": "model",
-              "properties": {}
-            },
-            {
-              "type": "key",
-              "properties": {
-                "fields": [
-                  "deviceId"
-                ]
-              }
-            },
-            {
-              "type": "auth",
-              "properties": {
-                "rules": [
-                  {
-                    "allow": "private",
-                    "operations": [
-                      "create",
-                      "update",
-                      "delete",
-                      "read"
-                    ]
-                  }
-                ]
-              }
-            }
-          ],
-          "primaryKeyInfo": {
-            "isCustomPrimaryKey": true,
-            "primaryKeyFieldName": "deviceId",
-            "sortKeyFieldNames": []
-          }
-        },
-        "SensorData": {
-          "name": "SensorData",
-          "fields": {
-            "dataId": {
-              "name": "dataId",
-              "isArray": false,
-              "type": "ID",
-              "isRequired": true,
-              "attributes": []
-            },
-            "timestamp": {
-              "name": "timestamp",
-              "isArray": false,
-              "type": "AWSTimestamp",
-              "isRequired": false,
-              "attributes": []
-            },
-            "temperature": {
-              "name": "temperature",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "humidity": {
-              "name": "humidity",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "co2": {
-              "name": "co2",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "light": {
-              "name": "light",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "soilMoisture": {
-              "name": "soilMoisture",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "modelRecommendation": {
-              "name": "modelRecommendation",
-              "isArray": false,
-              "type": "AWSJSON",
-              "isRequired": false,
-              "attributes": []
-            },
-            "actualFanSpeed": {
-              "name": "actualFanSpeed",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "actualLightIntensity": {
-              "name": "actualLightIntensity",
-              "isArray": false,
-              "type": "Float",
-              "isRequired": false,
-              "attributes": []
-            },
-            "microcontrollerId": {
-              "name": "microcontrollerId",
-              "isArray": false,
-              "type": "ID",
-              "isRequired": false,
-              "attributes": []
-            },
-            "microcontroller": {
-              "name": "microcontroller",
-              "isArray": false,
-              "type": {
-                "model": "Microcontroller"
-              },
-              "isRequired": false,
-              "attributes": [],
-              "association": {
-                "connectionType": "BELONGS_TO",
-                "targetNames": [
-                  "microcontrollerId"
-                ]
-              }
-            },
-            "createdAt": {
-              "name": "createdAt",
-              "isArray": false,
-              "type": "AWSDateTime",
-              "isRequired": false,
-              "attributes": [],
-              "isReadOnly": true
-            },
-            "updatedAt": {
-              "name": "updatedAt",
-              "isArray": false,
-              "type": "AWSDateTime",
-              "isRequired": false,
-              "attributes": [],
-              "isReadOnly": true
-            }
-          },
-          "syncable": true,
-          "pluralName": "SensorData",
-          "attributes": [
-            {
-              "type": "model",
-              "properties": {}
-            },
-            {
-              "type": "key",
-              "properties": {
-                "fields": [
-                  "dataId"
-                ]
-              }
-            },
-            {
-              "type": "auth",
-              "properties": {
-                "rules": [
-                  {
-                    "allow": "private",
-                    "operations": [
-                      "create",
-                      "update",
-                      "delete",
-                      "read"
-                    ]
-                  }
-                ]
-              }
-            }
-          ],
-          "primaryKeyInfo": {
-            "isCustomPrimaryKey": true,
-            "primaryKeyFieldName": "dataId",
-            "sortKeyFieldNames": []
-          }
         }
       },
       "enums": {
-        "DeviceDeviceType": {
-          "name": "DeviceDeviceType",
+        "MicrocontrollerFanStatus": {
+          "name": "MicrocontrollerFanStatus",
           "values": [
-            "FAN",
-            "LIGHT",
-            "WATER_PUMP"
+            "ON",
+            "OFF",
+            "AUTO"
           ]
         },
-        "DeviceStatus": {
-          "name": "DeviceStatus",
+        "MicrocontrollerLightStatus": {
+          "name": "MicrocontrollerLightStatus",
+          "values": [
+            "ON",
+            "OFF",
+            "AUTO"
+          ]
+        },
+        "MicrocontrollerWaterPumpStatus": {
+          "name": "MicrocontrollerWaterPumpStatus",
           "values": [
             "ON",
             "OFF",
