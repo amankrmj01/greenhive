@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:amplify_core/amplify_core.dart';
 import 'package:greenhive/consts/images.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -67,8 +66,8 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                     Text(Get.arguments.name,
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 8),
-                    Text('Description', style: TextStyle(fontSize: 14)),
+                    const SizedBox(height: 8),
+                    const Text('Description', style: TextStyle(fontSize: 14)),
                   ],
                 )),
         ),
@@ -106,11 +105,11 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
               children: [
                 _buildData(
                     'Temperature',
-                    Icon(Icons.thermostat, color: Colors.red),
+                    const Icon(Icons.thermostat, color: Colors.red),
                     controller.temperature),
                 _buildData(
                     'Humidity',
-                    Icon(Icons.water_drop, color: Colors.blue),
+                    const Icon(Icons.water_drop, color: Colors.blue),
                     controller.humidity),
               ],
             ),
@@ -118,9 +117,11 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildData('CO2', Icon(Icons.air, color: Colors.green),
+                _buildData('CO2', const Icon(Icons.air, color: Colors.green),
                     controller.co2),
-                _buildData('Light', Icon(Icons.wb_sunny, color: Colors.yellow),
+                _buildData(
+                    'Light',
+                    const Icon(Icons.wb_sunny, color: Colors.yellow),
                     controller.light),
               ],
             ),
