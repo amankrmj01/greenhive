@@ -47,3 +47,11 @@ node_modules
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+/lib/consts/certi/certificate.crt
+/lib/consts/certi/private.key
+/lib/consts/certi/root.pem
+
+/lib/consts/certi/private.key
+/lib/consts/certi/root.pem
+/lib/consts/certi/certificate.crt
+/assets/certi/

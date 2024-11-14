@@ -7,6 +7,8 @@ class MyTextArea extends StatefulWidget {
   final Icon? preFixIcon;
   final bool prefix;
   final TextInputType textInputType;
+  final String? Function(String?)? validator;
+
   const MyTextArea({
     super.key,
     required this.controller,
@@ -15,6 +17,7 @@ class MyTextArea extends StatefulWidget {
     this.preFixIcon,
     required this.prefix,
     required this.textInputType,
+    this.validator,
   });
 
   @override
@@ -33,16 +36,17 @@ class _MyTextAreaState extends State<MyTextArea> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: TextField(
+      child: TextFormField(
         onTapOutside: (_) {
           FocusScope.of(context).unfocus();
         },
         controller: widget.controller,
         obscureText: isObscure,
+        keyboardType: widget.textInputType,
+        validator: widget.validator,
         decoration: InputDecoration(
           fillColor: Color.lerp(Colors.white, Colors.teal, 0.1),
           filled: true,
-          // icon: widget.icon,
           prefixIcon: widget.prefix ? widget.preFixIcon : null,
           suffixIcon: widget.isObscure
               ? IconButton(
@@ -52,9 +56,9 @@ class _MyTextAreaState extends State<MyTextArea> {
                     });
                   },
                   icon:
-                      Icon(isObscure ? Icons.visibility : Icons.visibility_off))
+                      Icon(isObscure ? Icons.visibility : Icons.visibility_off),
+                )
               : null,
-          // labelText: widget.labelText,
           hintText: widget.labelText,
           hintStyle: const TextStyle(
             color: Colors.grey,

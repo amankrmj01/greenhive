@@ -2,6 +2,7 @@ import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'amplify_outputs.dart';
 import 'infrastructure/dal/services/aws/aws_service.dart';
@@ -10,6 +11,7 @@ import 'infrastructure/navigation/routes.dart';
 import 'models/ModelProvider.dart';
 
 Future<void> main() async {
+  await dotenv.load(fileName: '.env');
   WidgetsFlutterBinding.ensureInitialized();
 
   var initialRoute = await Routes.initialRoute;

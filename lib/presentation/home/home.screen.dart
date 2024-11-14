@@ -73,7 +73,9 @@ class HomeScreen extends GetView<HomeController> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Get.toNamed(Routes.NOTIFICATION);
+                                    },
                                     icon: const Icon(
                                       Icons.notifications,
                                       size: 32,
@@ -181,22 +183,23 @@ class HomeScreen extends GetView<HomeController> {
                                       ],
                                     ),
                                     const Spacer(),
-                                    Row(
-                                      children: [
-                                        Text(greenhouse.isActive!
-                                            ? 'Active'
-                                            : 'Inactive'),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: CircleAvatar(
-                                            maxRadius: 8,
-                                            backgroundColor:
-                                                greenhouse.isActive!
-                                                    ? Colors.green
-                                                    : Colors.red,
+                                    Obx(
+                                      () => Row(
+                                        children: [
+                                          Text(controller.isActive.value),
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: CircleAvatar(
+                                              maxRadius: 8,
+                                              backgroundColor:
+                                                  controller.isActive.value ==
+                                                          'Active'
+                                                      ? Colors.green
+                                                      : Colors.red,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                     16.widthBox,
                                   ],
@@ -210,6 +213,12 @@ class HomeScreen extends GetView<HomeController> {
                     ),
                   );
                 }),
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 100,
+                    color: Colors.transparent,
+                  ),
+                ),
               ],
             ),
           )

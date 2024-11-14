@@ -1,3 +1,4 @@
+// lib/presentation/home/controllers/home.controller.dart
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/Greenhouse.dart';
+import '../../../models/Microcontroller.dart';
+import '../../widgets/snackbar_c.dart';
 
 class HomeController extends GetxController {
   final scrollController = ScrollController();
@@ -17,6 +20,7 @@ class HomeController extends GetxController {
   RxList<Greenhouse> greenhouses =
       <Greenhouse>[].obs; // Reactive list of greenhouses
   final isLoading = true.obs;
+  final isActive = 'Loading...'.obs;
 
   @override
   void onInit() {
@@ -34,21 +38,18 @@ class HomeController extends GetxController {
     });
     scrollController.addListener(() {
       if (scrollController.position.pixels <= 0 &&
-          scrollController.position.outOfRange) {
-        fetchGreenhouses();
-      }
+          scrollController.position.outOfRange) {}
     });
   }
 
   Future<void> fetchGreenhouses() async {
     try {
       isLoading.value = true;
-      safePrint('Fetching greenhouses...');
+      SnackbarHelper.showCustomSnackbar('Info', 'Fetching greenhouses...');
 
       // 1. Get current authenticated user
       final authUser = await Amplify.Auth.getCurrentUser();
       final userId = authUser.userId;
-      safePrint('Authenticated user ID: $userId');
 
       // 2. Query Greenhouses for the current user using Amplify API
       final request = ModelQueries.list(
@@ -59,30 +60,76 @@ class HomeController extends GetxController {
 
       if (response.hasErrors) {
         // Handle error
-        safePrint('Error fetching greenhouses: ${response.errors}');
-        Get.snackbar('Error', 'Could not load greenhouses.',
-            snackPosition: SnackPosition.BOTTOM);
+        SnackbarHelper.showCustomSnackbar(
+            'Error', 'Error fetching greenhouses: ${response.errors}',
+            backgroundColor: Colors.red);
         return;
       }
 
       // 3. Update the reactive list of greenhouses
       greenhouses.value =
           response.data?.items.whereType<Greenhouse>().toList() ?? [];
-      safePrint('Greenhouses fetched: ${greenhouses.value.length}');
       isLoading.value = false; // Update loading state after fetching
+
+      // 4. Check the isActive status for each greenhouse
+      for (var greenhouse in greenhouses) {
+        await checkGreenhouseIsActive(greenhouse);
+      }
     } catch (e) {
       isLoading.value = false;
-      safePrint('Error fetching greenhouses: $e');
-      Get.snackbar('Error', 'Could not load greenhouses.',
-          snackPosition: SnackPosition.BOTTOM);
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'Error fetching greenhouses: $e',
+          backgroundColor: Colors.red);
+    }
+  }
+
+  Future<void> checkGreenhouseIsActive(Greenhouse greenhouse) async {
+    try {
+      final microcontrollerId = greenhouse.greenhouseId;
+      if (microcontrollerId.isEmpty) {
+        throw Exception('Microcontroller ID is empty');
+      }
+
+      final microcontrollerIdentifier =
+          MicrocontrollerModelIdentifier(microcontrollerId: microcontrollerId);
+      final request = ModelQueries.get(
+          Microcontroller.classType, microcontrollerIdentifier);
+      final response = await Amplify.API.query(request: request).response;
+
+      final microcontroller = response.data;
+      if (microcontroller == null) {
+        throw Exception('Microcontroller not found');
+      }
+
+      final updatedAt = microcontroller.updatedAt;
+      if (updatedAt == null) {
+        throw Exception('Microcontroller updatedAt is null');
+      }
+
+      DateTime updatedAtTime = updatedAt.getDateTimeInUtc();
+      DateTime currentTime = DateTime.now().toUtc();
+
+      Duration difference = currentTime.difference(updatedAtTime);
+
+      if (difference.inMinutes <= 5) {
+        isActive.value = 'Active';
+      } else {
+        isActive.value = 'Inactive';
+      }
+    } catch (e) {
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'Error checking greenhouse status: $e',
+          backgroundColor: Colors.red);
     }
   }
 
   String getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) {
+    if (hour >= 0 && hour < 6) {
+      greeting.value = 'Good Night 🌙';
+    } else if (hour >= 6 && hour < 12) {
       greeting.value = 'Good Morning ☀️';
-    } else if (hour < 17) {
+    } else if (hour >= 12 && hour < 17) {
       greeting.value = 'Good Afternoon 🌤️';
     } else {
       greeting.value = 'Good Evening 🌕';

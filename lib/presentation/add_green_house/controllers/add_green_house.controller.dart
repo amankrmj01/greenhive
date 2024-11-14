@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/ModelProvider.dart';
+import '../../widgets/snackbar_c.dart';
 
 class AddGreenHouseController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -34,8 +35,15 @@ class AddGreenHouseController extends GetxController {
 
   Future<void> saveGreenhouse() async {
     if (formKey.currentState!.validate()) {
-      Get.snackbar('Info', 'Form validation successful.',
-          backgroundColor: Colors.blue, colorText: Colors.white);
+      SnackbarHelper.showCustomSnackbar('Info', 'Form validation successful.',
+          backgroundColor: Colors.blue);
+
+      // Show loading dialog
+      Get.dialog(
+        const Center(child: CircularProgressIndicator()),
+        barrierDismissible: false,
+      );
+
       try {
         final user = await Amplify.Auth.getCurrentUser();
         final userId = user.userId;
@@ -50,9 +58,10 @@ class AddGreenHouseController extends GetxController {
             .response;
 
         if (microcontrollerListResponse.hasErrors) {
-          Get.snackbar('Error',
+          Get.back(); // Dismiss loading dialog
+          SnackbarHelper.showCustomSnackbar('Error',
               'Error fetching microcontroller: ${microcontrollerListResponse.errors}',
-              backgroundColor: Colors.red, colorText: Colors.white);
+              backgroundColor: Colors.red);
           return;
         }
 
@@ -62,8 +71,8 @@ class AddGreenHouseController extends GetxController {
 
         if (microcontrollerList.isNotEmpty) {
           microcontroller = microcontrollerList.first;
-          Get.snackbar('Info', 'Microcontroller found.',
-              backgroundColor: Colors.blue, colorText: Colors.white);
+          SnackbarHelper.showCustomSnackbar('Info', 'Microcontroller found.',
+              backgroundColor: Colors.blue);
         } else {
           // 2. Create Microcontroller if not found
           microcontroller = Microcontroller(
@@ -89,14 +98,16 @@ class AddGreenHouseController extends GetxController {
               .response;
 
           if (microcontrollerResponse.hasErrors) {
-            Get.snackbar('Error',
+            Get.back(); // Dismiss loading dialog
+            SnackbarHelper.showCustomSnackbar('Error',
                 'Error creating microcontroller: ${microcontrollerResponse.errors}',
-                backgroundColor: Colors.red, colorText: Colors.white);
+                backgroundColor: Colors.red);
             return;
           }
           microcontroller = microcontrollerResponse.data;
-          Get.snackbar('Success', 'Created new microcontroller.',
-              backgroundColor: Colors.green, colorText: Colors.white);
+          SnackbarHelper.showCustomSnackbar(
+              'Success', 'Created new microcontroller.',
+              backgroundColor: Colors.green);
         }
 
         // 3. Create Greenhouse
@@ -104,7 +115,7 @@ class AddGreenHouseController extends GetxController {
           name: nameController.text,
           cropName: cropNameController.text,
           cropTimePeriod: int.parse(cropTimePeriodController.text),
-          isActive: isActive.value,
+          isActive: false,
           greenhouseId: microcontroller!.microcontrollerId,
           user: User(userId: userId),
         );
@@ -114,9 +125,10 @@ class AddGreenHouseController extends GetxController {
             .response;
 
         if (greenhouseResponse.hasErrors) {
-          Get.snackbar('Error',
+          Get.back(); // Dismiss loading dialog
+          SnackbarHelper.showCustomSnackbar('Error',
               'Error creating greenhouse: ${greenhouseResponse.errors}',
-              backgroundColor: Colors.red, colorText: Colors.white);
+              backgroundColor: Colors.red);
           return;
         }
 
@@ -130,8 +142,10 @@ class AddGreenHouseController extends GetxController {
             .response;
 
         if (userResponse.hasErrors) {
-          Get.snackbar('Error', 'Error fetching user: ${userResponse.errors}',
-              backgroundColor: Colors.red, colorText: Colors.white);
+          Get.back(); // Dismiss loading dialog
+          SnackbarHelper.showCustomSnackbar(
+              'Error', 'Error fetching user: ${userResponse.errors}',
+              backgroundColor: Colors.red);
           return;
         }
 
@@ -148,13 +162,14 @@ class AddGreenHouseController extends GetxController {
               .response;
 
           if (createUserResponse.hasErrors) {
-            Get.snackbar(
+            Get.back(); // Dismiss loading dialog
+            SnackbarHelper.showCustomSnackbar(
                 'Error', 'Error creating user: ${createUserResponse.errors}',
-                backgroundColor: Colors.red, colorText: Colors.white);
+                backgroundColor: Colors.red);
             return;
           }
-          Get.snackbar('Success', 'New user created.',
-              backgroundColor: Colors.green, colorText: Colors.white);
+          SnackbarHelper.showCustomSnackbar('Success', 'New user created.',
+              backgroundColor: Colors.green);
         } else {
           // User exists, update the user
           existingUser = userResponse.data!;
@@ -168,26 +183,29 @@ class AddGreenHouseController extends GetxController {
               .response;
 
           if (updateUserResponse.hasErrors) {
-            Get.snackbar(
+            Get.back(); // Dismiss loading dialog
+            SnackbarHelper.showCustomSnackbar(
                 'Error', 'Error updating user: ${updateUserResponse.errors}',
-                backgroundColor: Colors.red, colorText: Colors.white);
+                backgroundColor: Colors.red);
             return;
           }
-          Get.snackbar('Success', 'User updated.',
-              backgroundColor: Colors.green, colorText: Colors.white);
+          SnackbarHelper.showCustomSnackbar('Success', 'User updated.',
+              backgroundColor: Colors.green);
         }
 
         // 5. Navigation and success message
-        Get.back();
-        Get.snackbar('Success', 'Greenhouse added successfully!',
-            backgroundColor: Colors.green, colorText: Colors.white);
+        Get.back(); // Dismiss loading dialog
+        SnackbarHelper.showCustomSnackbar(
+            'Success', 'Greenhouse added successfully!',
+            backgroundColor: Colors.green);
       } catch (e) {
-        Get.snackbar('Error', 'Unexpected error: $e',
-            backgroundColor: Colors.red, colorText: Colors.white);
+        Get.back(); // Dismiss loading dialog
+        SnackbarHelper.showCustomSnackbar('Error', 'Unexpected error: $e',
+            backgroundColor: Colors.red);
       }
     } else {
-      Get.snackbar('Error', 'Form validation failed.',
-          backgroundColor: Colors.red, colorText: Colors.white);
+      SnackbarHelper.showCustomSnackbar('Error', 'Form validation failed.',
+          backgroundColor: Colors.red);
     }
   }
 }

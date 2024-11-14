@@ -25,26 +25,51 @@ class SignInScreen extends GetView<SignInController> {
               scrollDirection: Axis.vertical,
               child: Column(
                 children: [
-                  Column(
-                    children: [
-                      MyTextArea(
-                        textInputType: TextInputType.name,
-                        controller: controller.username,
-                        isObscure: false,
-                        labelText: 'Username',
-                        preFixIcon: const Icon(Icons.person),
-                        prefix: true,
-                      ),
-                      const SizedBox(height: 16),
-                      MyTextArea(
-                        textInputType: TextInputType.visiblePassword,
-                        controller: controller.password,
-                        isObscure: true,
-                        labelText: 'Password',
-                        preFixIcon: const Icon(Icons.lock),
-                        prefix: true,
-                      ),
-                    ],
+                  Form(
+                    key: controller.formKey,
+                    child: Column(
+                      children: [
+                        MyTextArea(
+                          textInputType: TextInputType.name,
+                          controller: controller.username,
+                          isObscure: false,
+                          labelText: 'Username',
+                          preFixIcon: const Icon(Icons.person),
+                          prefix: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your username';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        MyTextArea(
+                          textInputType: TextInputType.visiblePassword,
+                          controller: controller.password,
+                          isObscure: true,
+                          labelText: 'Password',
+                          preFixIcon: const Icon(Icons.lock),
+                          prefix: true,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your password';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            if (controller.formKey.currentState?.validate() ??
+                                false) {
+                              // Form is valid, proceed with the action
+                            }
+                          },
+                          child: const Text('Submit'),
+                        ),
+                      ],
+                    ),
                   ).box.p16.make(),
                   const SizedBox(height: 16),
                   Row(

@@ -67,15 +67,6 @@ class AddGreenHouseScreen extends GetView<AddGreenHouseController> {
                     return null;
                   },
                 ),
-                Obx(
-                  () => SwitchListTile(
-                    title: const Text('Greenhouse Active'),
-                    value: controller.isActive.value,
-                    onChanged: (value) {
-                      controller.isActive.value = value;
-                    },
-                  ),
-                ),
                 ElevatedButton(
                   onPressed: () {
                     controller.saveGreenhouse();

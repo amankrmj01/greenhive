@@ -1,15 +1,11 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../presentation/auth/toast_message.dart';
 import '../auth/sign_up.dart';
 
 class SignUpService implements ISignUpService {
-  final toastMessage = Rx<ToastMessage?>(null);
-
   @override
   Future<bool> signUpUser({
     required String username,
@@ -32,13 +28,7 @@ class SignUpService implements ISignUpService {
       );
       return await _handleSignUpResult(result);
     } on AuthException catch (e) {
-      toastMessage.value = ToastMessage(
-        message: 'Error signing up user: ${e.message}',
-        backgroundColor: Colors.red,
-        icon: const Icon(CupertinoIcons.xmark_circle_fill, color: Colors.white),
-      );
-      safePrint('Error signing up user: ${e.message}');
-      return false;
+      throw Exception('Error signing up user: ${e.message}');
     }
   }
 
@@ -50,14 +40,7 @@ class SignUpService implements ISignUpService {
         _handleCodeDelivery(codeDeliveryDetails);
         return true;
       case AuthSignUpStep.done:
-        toastMessage.value = ToastMessage(
-          message: 'Sign up is complete',
-          backgroundColor: Colors.green,
-          icon: const Icon(CupertinoIcons.check_mark_circled,
-              color: Colors.white),
-        );
         safePrint('Sign up is complete');
-
         return false;
       default:
         return false;
@@ -66,13 +49,6 @@ class SignUpService implements ISignUpService {
 
   void _handleCodeDelivery(AuthCodeDeliveryDetails codeDeliveryDetails) {
     if (Get.context == null) return;
-    toastMessage.value = ToastMessage(
-      message:
-          'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
-          'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
-      backgroundColor: Colors.green,
-      icon: const Icon(CupertinoIcons.check_mark_circled, color: Colors.white),
-    );
     safePrint(
       'A confirmation code has been sent to ${codeDeliveryDetails.destination}. '
       'Please check your ${codeDeliveryDetails.deliveryMedium.name} for the code.',
@@ -90,14 +66,7 @@ class SignUpService implements ISignUpService {
       );
       return await _handleSignUpResult(result);
     } on AuthException catch (e) {
-      toastMessage.value = ToastMessage(
-        message: 'Error confirming user: ${e.message}',
-        backgroundColor: Colors.red,
-        icon: const Icon(CupertinoIcons.xmark_circle_fill, color: Colors.white),
-      );
-
-      safePrint('Error confirming user: ${e.message}');
-      return false;
+      throw Exception('Error confirming user: ${e.message}');
     }
   }
 }

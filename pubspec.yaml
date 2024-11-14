@@ -50,6 +50,8 @@ dependencies:
   amplify_api: ^2.5.0
   amplify_storage_s3: ^2.5.0
   amplify_datastore: ^2.5.0
+  mqtt_client: ^10.5.1
+  flutter_dotenv: ^5.2.1
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +79,11 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/logo/
+    - .env
+    - assets/certi/
+    - assets/certi/root.pem
+    - assets/certi/private.key
+    - assets/certi/certificate.crt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

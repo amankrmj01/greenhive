@@ -18,24 +18,20 @@ class SignInService implements ISignInService {
       );
       return await _handleSignInResult(result);
     } on AuthException catch (e) {
-      safePrint('Error signing in: ${e.message}');
-      return false;
+      throw Exception('Error signing in: ${e.message}');
     }
   }
 
   Future<bool> _handleSignInResult(SignInResult result) async {
     switch (result.nextStep.signInStep) {
       case AuthSignInStep.confirmSignInWithOtpCode:
-        safePrint('Prompt for OTP');
-        // _promptForOtpCode();
-        return false;
+        throw Exception('Prompt for OTP');
       case AuthSignInStep.done:
-        safePrint('Sign in is complete');
         Get.offNamed(Routes.HOME);
         return true;
       default:
-        safePrint('Unhandled sign-in step: ${result.nextStep.signInStep}');
-        return false;
+        throw Exception(
+            'Unhandled sign-in step: ${result.nextStep.signInStep}');
     }
   }
 }

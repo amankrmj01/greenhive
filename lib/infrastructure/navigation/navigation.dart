@@ -71,5 +71,15 @@ class Nav {
       page: () => const GreenHouseScreen(),
       binding: GreenHouseControllerBinding(),
     ),
+    GetPage(
+      name: Routes.NOTIFICATION,
+      page: () => const NotificationScreen(),
+      binding: NotificationControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.NOTIFICATION,
+      page: () => const NotificationScreen(),
+      binding: NotificationControllerBinding(),
+    ),
   ];
 }

@@ -7,8 +7,7 @@ class SignOutService implements ISignOutService {
     try {
       await Amplify.Auth.signOut();
     } on AuthException catch (e) {
-      safePrint('Error signing out: ${e.message}');
-      return false;
+      throw Exception('Error signing out: ${e.message}');
     }
     return true;
   }

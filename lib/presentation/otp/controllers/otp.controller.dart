@@ -5,6 +5,7 @@ import 'package:get_it/get_it.dart';
 import '../../auth/toast_message.dart';
 import '../../../infrastructure/dal/services/aws/sign_up_service.dart';
 import '../../../infrastructure/navigation/routes.dart';
+import '../../widgets/snackbar_c.dart';
 
 class OtpController extends GetxController {
   final otpController = TextEditingController();
@@ -28,19 +29,42 @@ class OtpController extends GetxController {
     required String confirmationCode,
   }) async {
     if (confirmationCode.length != 6) {
-      toastMessage.value = ToastMessage(
-        message: 'Please enter OTP',
-        backgroundColor: Colors.red.withOpacity(0.2),
-        icon: const Icon(CupertinoIcons.xmark_circle_fill, color: Colors.red),
-      );
+      SnackbarHelper.showCustomSnackbar('Error', 'Please enter OTP',
+          backgroundColor: Colors.red.withOpacity(0.2));
       return;
     }
-    final result = await signUpService.confirmUser(
-      username: username,
-      confirmationCode: confirmationCode,
+
+    // Show loading dialog
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
     );
-    if (!result) {
-      Get.offAllNamed(Routes.HOME);
+
+    try {
+      final result = await signUpService.confirmUser(
+        username: username,
+        confirmationCode: confirmationCode,
+      );
+
+      // Dismiss loading dialog
+      Get.back();
+
+      if (!result) {
+        SnackbarHelper.showCustomSnackbar(
+            'Success', 'OTP confirmed successfully',
+            backgroundColor: Colors.green);
+        Get.offAllNamed(Routes.HOME);
+      } else {
+        SnackbarHelper.showCustomSnackbar('Error', 'Failed to confirm OTP',
+            backgroundColor: Colors.red);
+      }
+    } catch (e) {
+      // Dismiss loading dialog
+      Get.back();
+
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'An unexpected error occurred: $e',
+          backgroundColor: Colors.red);
     }
   }
 }

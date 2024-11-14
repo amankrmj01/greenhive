@@ -2,6 +2,7 @@ export 'package:greenhive/presentation/add_green_house/add_green_house.screen.da
 export 'package:greenhive/presentation/auth/auth.screen.dart';
 export 'package:greenhive/presentation/green_house/green_house.screen.dart';
 export 'package:greenhive/presentation/home/home.screen.dart';
+export 'package:greenhive/presentation/notification/notification.screen.dart';
 export 'package:greenhive/presentation/otp/otp.screen.dart';
 export 'package:greenhive/presentation/sign_in/sign_in.screen.dart';
 export 'package:greenhive/presentation/sign_up/sign_up.screen.dart';
