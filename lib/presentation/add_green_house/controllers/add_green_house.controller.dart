@@ -83,7 +83,7 @@ class AddGreenHouseController extends GetxController {
             co2: 0.0,
             lightLevel: 0.0,
             soilMoisture: 0.0,
-            modelRecommendation: '',
+            modelRecommendation: '{}',
             actualFanSpeed: 0.0,
             actualLightIntensity: 0.0,
             fanStatus: MicrocontrollerFanStatus.OFF,
@@ -98,7 +98,9 @@ class AddGreenHouseController extends GetxController {
               .response;
 
           if (microcontrollerResponse.hasErrors) {
-            Get.back(); // Dismiss loading dialog
+            Get.back();
+            safePrint(
+                'Error ${microcontrollerResponse.errors}'); // Dismiss loading dialog
             SnackbarHelper.showCustomSnackbar('Error',
                 'Error creating microcontroller: ${microcontrollerResponse.errors}',
                 backgroundColor: Colors.red);

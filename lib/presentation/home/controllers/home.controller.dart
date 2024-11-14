@@ -2,6 +2,7 @@
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -43,6 +44,12 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchGreenhouses() async {
+    debugPrint("MQTT_ENDPOINT: ${dotenv.env['MQTT_ENDPOINT']}");
+    debugPrint("CLIENT_ID: ${dotenv.env['CLIENT_ID']}");
+    debugPrint("ROOT_CA_PATH: ${dotenv.env['ROOT_CA_PATH']}");
+    debugPrint("CERT_PATH: ${dotenv.env['CERT_PATH']}");
+    debugPrint("PRIVATE_KEY_PATH: ${dotenv.env['PRIVATE_KEY_PATH']}");
+    debugPrint("PUBLISH_TOPIC: ${dotenv.env['PUBLISH_TOPIC']}");
     try {
       isLoading.value = true;
       SnackbarHelper.showCustomSnackbar('Info', 'Fetching greenhouses...');

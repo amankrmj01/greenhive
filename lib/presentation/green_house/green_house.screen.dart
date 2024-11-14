@@ -33,6 +33,22 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                 _climateInfo(),
                 16.heightBox,
                 _deviceControls(),
+                16.heightBox,
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  onPressed: () {
+                    controller.deleteCurrentMicrocontrollerAndGreenhouse();
+                  },
+                  child: Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                )
               ],
             ),
           ),

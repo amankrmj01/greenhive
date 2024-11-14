@@ -80,10 +80,9 @@ flutter:
     - assets/fonts/
     - assets/logo/
     - .env
-    - assets/certi/
-    - assets/certi/root.pem
-    - assets/certi/private.key
-    - assets/certi/certificate.crt
+    - assets/certificate/root.txt
+    - assets/certificate/private.txt
+    - assets/certificate/certificate.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

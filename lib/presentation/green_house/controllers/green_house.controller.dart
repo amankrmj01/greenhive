@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as GetX;
+import 'package:get/get_core/src/get_main.dart';
 import 'package:greenhive/models/MicrocontrollerFanStatus.dart';
 import 'package:greenhive/models/MicrocontrollerLightStatus.dart';
 import 'package:greenhive/models/MicrocontrollerWaterPumpStatus.dart';
@@ -112,12 +114,6 @@ class GreenHouseController extends GetX.GetxController {
     humidity.value = updatedMicrocontroller.humidity.toString();
     soilMoisture.value = updatedMicrocontroller.soilMoisture.toString();
     light.value = updatedMicrocontroller.actualLightIntensity.toString();
-    fanStatus.value =
-        updatedMicrocontroller.fanStatus!.toString().split('.')[1];
-    lightStatus.value =
-        updatedMicrocontroller.lightStatus!.toString().split('.')[1];
-    waterPumpStatus.value =
-        updatedMicrocontroller.waterPumpStatus!.toString().split('.')[1];
   }
 
   void _checkMicrocontrollerStatus(TemporalDateTime? updatedAt) {
@@ -252,49 +248,76 @@ class GreenHouseController extends GetX.GetxController {
     }
   }
 
-  void _setupMqttClient() {
+  void _setupMqttClient() async {
     mqttClient = MqttServerClient.withPort(
         dotenv.env['MQTT_ENDPOINT']!, dotenv.env['CLIENT_ID']!, 8883);
     mqttClient!.secure = true;
     mqttClient!.setProtocolV311();
     mqttClient!.logging(on: true);
 
+    // Create a security context
     final context = SecurityContext.defaultContext;
-    context.setTrustedCertificates(dotenv.env['ROOT_CA_PATH']!);
-    context.useCertificateChain(dotenv.env['CERT_PATH']!);
-    context.usePrivateKey(dotenv.env['PRIVATE_KEY_PATH']!);
 
+    // Load certificate and key files as strings, then encode to bytes
+    final rootPemData =
+        await rootBundle.loadString(dotenv.env['ROOT_CA_PATH']!);
+    final certData = await rootBundle.loadString(dotenv.env['CERT_PATH']!);
+    final privateKeyData =
+        await rootBundle.loadString(dotenv.env['PRIVATE_KEY_PATH']!);
+
+    // Set certificates and private key using byte arrays
+    context.setTrustedCertificatesBytes(utf8.encode(rootPemData));
+    context.useCertificateChainBytes(utf8.encode(certData));
+    context.usePrivateKeyBytes(utf8.encode(privateKeyData));
+
+    // Assign the security context to the MQTT client
     mqttClient!.securityContext = context;
 
+    // Set up connection message
     final connMessage = MqttConnectMessage()
         .withClientIdentifier(dotenv.env['CLIENT_ID']!)
         .startClean()
         .withWillQos(MqttQos.atMostOnce);
     mqttClient!.connectionMessage = connMessage;
 
-    mqttClient!.connect();
+    // Attempt to connect
+    try {
+      await mqttClient!.connect();
+      print("MQTT connected successfully.");
+    } catch (e) {
+      print("MQTT Connection error: $e");
+    }
   }
 
   Future<void> updateDeviceStatus(String value, String deviceType) async {
-    await _waitForSpecificSecond([2, 12, 22, 32, 42, 52]);
     try {
-      String waterPumpStatus = this.waterPumpStatus.value;
-      String lightStatus = this.lightStatus.value;
-      String fanStatus = this.fanStatus.value;
+      String mqttPayloadKey;
+      String mqttPayloadValue;
 
-      if (deviceType == 'waterPump') {
-        waterPumpStatus = value;
-      } else if (deviceType == 'light') {
-        lightStatus = value;
-      } else if (deviceType == 'fan') {
-        fanStatus = value;
+      switch (deviceType) {
+        case 'waterPump':
+          waterPumpStatus.value = value;
+          mqttPayloadKey = "wps";
+          mqttPayloadValue = value == "ON" ? "1" : "0";
+          if (value == "ON") {
+            turnOffWaterPumpAfterDelay();
+          }
+          break;
+        case 'light':
+          lightStatus.value = value;
+          mqttPayloadKey = "ls";
+          mqttPayloadValue = value == "ON" ? "1" : "0";
+          break;
+        case 'fan':
+          fanStatus.value = value;
+          mqttPayloadKey = "fs";
+          mqttPayloadValue = value == "ON" ? "1" : "0";
+          break;
+        default:
+          throw Exception('Invalid device type');
       }
 
-      final mqttPayload = {
-        "wps": waterPumpStatus == "ON" ? "1" : "0",
-        "ls": lightStatus == "ON" ? "1" : "0",
-        "fs": fanStatus == "ON" ? "1" : "0"
-      };
+      final mqttPayload = {mqttPayloadKey: mqttPayloadValue};
 
       final builder = MqttClientPayloadBuilder();
       builder.addString(jsonEncode(mqttPayload));
@@ -306,6 +329,92 @@ class GreenHouseController extends GetX.GetxController {
     } catch (e) {
       SnackbarHelper.showCustomSnackbar(
           'Error', 'Failed to publish MQTT message: $e',
+          backgroundColor: Colors.red);
+    }
+  }
+
+  void turnOffWaterPumpAfterDelay() {
+    Future.delayed(const Duration(seconds: 3), () {
+      updateDeviceStatus("OFF", "waterPump");
+    });
+  }
+
+  void sendAllValuesToZero() {
+    try {
+      // Set all statuses to OFF
+      waterPumpStatus.value = "OFF";
+      lightStatus.value = "OFF";
+      fanStatus.value = "OFF";
+
+      // Construct the MQTT payload
+      final mqttPayload = {"wps": "0", "ls": "0", "fs": "0"};
+
+      final builder = MqttClientPayloadBuilder();
+      builder.addString(jsonEncode(mqttPayload));
+
+      // Publish the message
+      mqttClient!.publishMessage(
+          dotenv.env['PUBLISH_TOPIC']!, MqttQos.atMostOnce, builder.payload!);
+      SnackbarHelper.showCustomSnackbar('Info', 'Published: $mqttPayload',
+          backgroundColor: Colors.blue);
+    } catch (e) {
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'Failed to publish MQTT message: $e',
+          backgroundColor: Colors.red);
+    }
+  }
+
+  Future<void> deleteCurrentMicrocontrollerAndGreenhouse() async {
+    try {
+      String microcontrollerId = greenhouse.greenhouseId;
+
+      if (microcontrollerId.isEmpty) {
+        throw Exception('Microcontroller ID is empty');
+      }
+
+      // Fetch the current microcontroller
+      final microcontrollerIdentifier =
+          MicrocontrollerModelIdentifier(microcontrollerId: microcontrollerId);
+      final microcontrollerRequest = ModelQueries.get(
+          Microcontroller.classType, microcontrollerIdentifier);
+      final microcontrollerResponse =
+          await Amplify.API.query(request: microcontrollerRequest).response;
+
+      final microcontroller = microcontrollerResponse.data;
+      if (microcontroller == null) {
+        throw Exception('Microcontroller not found');
+      }
+
+      // Delete the microcontroller
+      final deleteMicrocontrollerRequest =
+          ModelMutations.delete<Microcontroller>(microcontroller);
+      await Amplify.API.mutate(request: deleteMicrocontrollerRequest).response;
+
+      // Fetch the current greenhouse
+      final greenhouseIdentifier =
+          GreenhouseModelIdentifier(greenhouseId: greenhouse.greenhouseId);
+      final greenhouseRequest =
+          ModelQueries.get(Greenhouse.classType, greenhouseIdentifier);
+      final greenhouseResponse =
+          await Amplify.API.query(request: greenhouseRequest).response;
+
+      final greenhouseData = greenhouseResponse.data;
+      if (greenhouseData == null) {
+        throw Exception('Greenhouse not found');
+      }
+
+      // Delete the greenhouse
+      final deleteGreenhouseRequest =
+          ModelMutations.delete<Greenhouse>(greenhouseData);
+      await Amplify.API.mutate(request: deleteGreenhouseRequest).response;
+
+      SnackbarHelper.showCustomSnackbar(
+          'Info', 'Deleted microcontroller and greenhouse successfully',
+          backgroundColor: Colors.blue);
+      Get.back();
+    } catch (e) {
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'Failed to delete microcontroller and greenhouse: $e',
           backgroundColor: Colors.red);
     }
   }
