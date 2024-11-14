@@ -44,11 +44,7 @@ class GreenHouseController extends GetX.GetxController {
   }
 
   void hideFxn() {
-    if (scrollController.position.pixels > 180) {
-      hide.value = true;
-    } else {
-      hide.value = false;
-    }
+    hide.value = scrollController.position.pixels > 180;
   }
 
   void _startTimer() {
