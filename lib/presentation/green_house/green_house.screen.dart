@@ -117,8 +117,10 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildData('CO2', const Icon(Icons.air, color: Colors.green),
-                    controller.co2),
+                _buildData(
+                    'Soil Moisture',
+                    const Icon(Icons.grass_rounded, color: Colors.green),
+                    controller.soilMoisture),
                 _buildData(
                     'Light',
                     const Icon(Icons.wb_sunny, color: Colors.yellow),
@@ -161,23 +163,17 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
           _deviceControlRow(
             'Fan',
             controller.fanStatus,
-            (value) => controller.updateFanStatus(
-              value!,
-            ),
+            (value) => controller.updateDeviceStatus(value!, 'fan'),
           ),
           _deviceControlRow(
             'Light',
             controller.lightStatus,
-            (value) => controller.updateLightStatus(
-              value!,
-            ),
+            (value) => controller.updateDeviceStatus(value!, 'light'),
           ),
           _deviceControlRow(
             'Water Pump',
             controller.waterPumpStatus,
-            (value) => controller.updateWaterPumpStatus(
-              value!,
-            ),
+            (value) => controller.updateDeviceStatus(value!, 'waterPump'),
           ),
           16.heightBox,
         ],
