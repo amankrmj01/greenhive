@@ -1,6 +1,6 @@
 # Greenhouse Management System
 
-##Table of Contents
+## Table of Contents
 - [Overview](#overview)
 - [Features](#features)
 - [Technical Stack](#technical-stack)
