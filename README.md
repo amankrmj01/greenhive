@@ -9,6 +9,7 @@
 - [Code Structure](#code-structure)
 - [Contributing](#contributing)
 - [License](#license)
+- [Version](#version)
 
 ## Overview
 The Greenhouse Management System is designed to monitor and control various environmental parameters within a greenhouse. This system allows users to manage devices such as fans, lights, and water pumps, and provides real-time updates through MQTT integration.
@@ -24,8 +25,9 @@ The Greenhouse Management System is designed to monitor and control various envi
 
 ## Technical Stack
 - **Languages**: Dart, Kotlin, Java, TypeScript, JavaScript
-- **Frameworks**: Flutter, Amplify, MQTT
+- **Frameworks**: Flutter
 - **Tools**: Android Studio, Gradle, npm, pub
+- **AWS Services**: AWS IOT Core, DynamoDB, Lambda, API Gateway, Cognito, IAM
 
 ## Setup Instructions
 1. **Clone the Repository**:
@@ -52,11 +54,16 @@ The Greenhouse Management System is designed to monitor and control various envi
    MQTT_ENDPOINT=<your-mqtt-endpoint>
    CLIENT_ID=<your-client-id>
    PUBLISH_TOPIC=<your-publish-topic>
+   SUBSCRIBE_TOPIC=<your-subscribe-topic>
+   CERT_PATH=<your-cert-path>
+   PRIVATE_KEY_PATH=<your-private-key-path>
+   ROOT_CA_PATH=<your-root-ca-path>
    ```
 
 4. **Run the Application**:
     - For Flutter:
       ```
+      flutter pub get
       flutter run
       ```
 
@@ -81,6 +88,13 @@ The Greenhouse Management System is designed to monitor and control various envi
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. See the LICENSE file for details.
 [License](https://creativecommons.org/licenses/by-nc/4.0/)
 [License](LICENSE.md)
+
+##Version
+- **Flutter Version**: 3.24.4 (Channel stable)
+- **Dart Version**: 3.5.4
+- **Android SDK Version**: 34.0.0
+- **Java Version**: OpenJDK Runtime Environment (build 21.0.3+-12282718-b509.11)
+- **Android Studio Version**: 2024.2
 
 ## Contact
 For any inquiries or support, please contact [amankrmj@gmail.com].
