@@ -33,23 +33,11 @@ const schema = a.schema({
 
             // Sensor Data Fields
             timestamp: a.timestamp(),
-            temperature: a.float(),
-            humidity: a.float(),
-            co2: a.float(),
-            lightLevel: a.float(),
-            soilMoisture: a.float(),
-            modelRecommendation: a.json(), // JSON type for complex recommendation structure
-            actualFanSpeed: a.float(),
-            actualLightIntensity: a.float(),
-
-            // Device-Specific Fields
-            fanStatus: a.enum(['ON', 'OFF', 'AUTO']),  // Status for fan
-            fanSpeedSetting: a.integer(),              // Speed setting for fan
-
-            lightStatus: a.enum(['ON', 'OFF', 'AUTO']),  // Status for light
-            lightIntensitySetting: a.integer(),          // Intensity setting for light
-
-            waterPumpStatus: a.enum(['ON', 'OFF', 'AUTO']), // Status for water pump
+            publishTopic: a.string(),
+            subscribeTopic: a.string(),
+            rootCA: a.string(),
+            privateKey: a.string(),
+            certificate: a.string(),
         })
         .identifier(['microcontrollerId'])
         .authorization((allow) => [allow.authenticated()]),

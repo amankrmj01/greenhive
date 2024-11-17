@@ -9,9 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as GetX;
 import 'package:get/get_core/src/get_main.dart';
-import 'package:greenhive/models/MicrocontrollerFanStatus.dart';
-import 'package:greenhive/models/MicrocontrollerLightStatus.dart';
-import 'package:greenhive/models/MicrocontrollerWaterPumpStatus.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
@@ -43,9 +40,9 @@ class GreenHouseController extends GetX.GetxController {
   bool isErrorSnackbarShown = false;
 
   late Greenhouse greenhouse;
-  Timer? _timer;
-
   MqttServerClient? mqttClient;
+  Timer? _statusCheckTimer;
+  DateTime? _lastMessageReceivedTime;
 
   @override
   void onInit() {
@@ -53,200 +50,18 @@ class GreenHouseController extends GetX.GetxController {
     scrollController.addListener(hideFxn);
     greenhouse = GetX.Get.arguments as Greenhouse;
     _setupMqttClient();
-    _startTimer();
+    _startStatusCheckTimer();
   }
 
   @override
   void onClose() {
-    _timer?.cancel();
+    _statusCheckTimer?.cancel();
     super.onClose();
   }
 
   void hideFxn() {
     hide.value = scrollController.position.pixels > 180;
   }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      fetchLatestSensorData();
-    });
-  }
-
-  Future<void> fetchLatestSensorData() async {
-    try {
-      String microcontrollerId = greenhouse.greenhouseId;
-
-      if (microcontrollerId.isEmpty) {
-        throw Exception('Microcontroller ID is empty');
-      }
-
-      final microcontrollerIdentifier =
-          MicrocontrollerModelIdentifier(microcontrollerId: microcontrollerId);
-      final request = ModelQueries.get(
-          Microcontroller.classType, microcontrollerIdentifier);
-      final response = await Amplify.API.query(request: request).response;
-
-      final microcontroller = response.data;
-      if (microcontroller == null) {
-        throw Exception('Microcontroller not found');
-      }
-
-      _updateGreenhouseData(microcontroller);
-      _checkMicrocontrollerStatus(microcontroller.updatedAt);
-    } catch (e) {
-      if (!isErrorSnackbarShown) {
-        isErrorSnackbarShown = true;
-        SnackbarHelper.showCustomSnackbar(
-            'Error', 'Failed to fetch latest sensor data: $e',
-            backgroundColor: Colors.red);
-      }
-    }
-  }
-
-  void _updateGreenhouseData(Microcontroller updatedMicrocontroller) {
-    if (!isUpdatingStatusSnackbarShown) {
-      isUpdatingStatusSnackbarShown = true;
-      SnackbarHelper.showCustomSnackbar('Info', 'Updating statuses...',
-          backgroundColor: Colors.blue);
-    }
-
-    temperature.value = updatedMicrocontroller.temperature.toString();
-    humidity.value = updatedMicrocontroller.humidity.toString();
-    soilMoisture.value = updatedMicrocontroller.soilMoisture.toString();
-    light.value = updatedMicrocontroller.actualLightIntensity.toString();
-  }
-
-  void _checkMicrocontrollerStatus(TemporalDateTime? updatedAt) {
-    if (updatedAt == null) {
-      if (!hasCheckedStatus || isActive.value) {
-        isActive.value = false;
-        hasCheckedStatus = true;
-        SnackbarHelper.showCustomSnackbar(
-            'Info', 'Microcontroller is inactive.',
-            backgroundColor: Colors.red);
-      }
-      return;
-    }
-
-    DateTime updatedAtTime = updatedAt.getDateTimeInUtc();
-    DateTime currentTime = DateTime.now().toUtc();
-
-    Duration difference = currentTime.difference(updatedAtTime);
-
-    if (difference.inMinutes <= 5) {
-      if (!hasCheckedStatus || !isActive.value) {
-        isActive.value = true;
-        hasCheckedStatus = true;
-        SnackbarHelper.showCustomSnackbar('Info', 'Microcontroller is active.',
-            backgroundColor: Colors.green);
-      }
-    } else {
-      if (!hasCheckedStatus || isActive.value) {
-        isActive.value = false;
-        hasCheckedStatus = true;
-        SnackbarHelper.showCustomSnackbar(
-            'Info', 'Microcontroller is inactive.',
-            backgroundColor: Colors.red);
-      }
-    }
-  }
-
-  // Future<void> updateDeviceStatus(String value, String deviceType) async {
-  //   await _waitForSpecificSecond([2, 12, 22, 32, 42, 52]);
-  //   try {
-  //     String microcontrollerId = greenhouse.greenhouseId;
-  //
-  //     if (microcontrollerId.isEmpty) {
-  //       throw Exception('Microcontroller ID is empty');
-  //     }
-  //
-  //     final microcontrollerIdentifier =
-  //         MicrocontrollerModelIdentifier(microcontrollerId: microcontrollerId);
-  //     final request = ModelQueries.get(
-  //         Microcontroller.classType, microcontrollerIdentifier);
-  //     final response = await Amplify.API.query(request: request).response;
-  //
-  //     final microcontroller = response.data;
-  //     if (microcontroller == null) {
-  //       throw Exception('Microcontroller not found');
-  //     }
-  //
-  //     Microcontroller updatedMicrocontroller;
-  //     switch (deviceType) {
-  //       case 'fan':
-  //         updatedMicrocontroller =
-  //             microcontroller.copyWith(fanStatus: _getFanStatusEnum(value));
-  //         break;
-  //       case 'light':
-  //         updatedMicrocontroller =
-  //             microcontroller.copyWith(lightStatus: _getLightStatusEnum(value));
-  //         break;
-  //       case 'waterPump':
-  //         updatedMicrocontroller = microcontroller.copyWith(
-  //             waterPumpStatus: _getWaterPumpStatusEnum(value));
-  //         break;
-  //       default:
-  //         throw Exception('Invalid device type');
-  //     }
-  //
-  //     final updateRequest =
-  //         ModelMutations.update<Microcontroller>(updatedMicrocontroller);
-  //     final updateResponse =
-  //         await Amplify.API.mutate(request: updateRequest).response;
-  //
-  //     SnackbarHelper.showCustomSnackbar('Info', 'Response: $updateResponse',
-  //         backgroundColor: Colors.blue);
-  //   } catch (e) {
-  //     SnackbarHelper.showCustomSnackbar(
-  //         'Error', 'Failed to update $deviceType status: $e',
-  //         backgroundColor: Colors.red);
-  //   }
-  // }
-
-  // MicrocontrollerFanStatus _getFanStatusEnum(String value) {
-  //   switch (value) {
-  //     case 'ON':
-  //       return MicrocontrollerFanStatus.ON;
-  //     case 'OFF':
-  //       return MicrocontrollerFanStatus.OFF;
-  //     case 'AUTO':
-  //       return MicrocontrollerFanStatus.AUTO;
-  //     default:
-  //       throw Exception('Invalid fan status value');
-  //   }
-  // }
-  //
-  // MicrocontrollerLightStatus _getLightStatusEnum(String value) {
-  //   switch (value) {
-  //     case 'ON':
-  //       return MicrocontrollerLightStatus.ON;
-  //     case 'OFF':
-  //       return MicrocontrollerLightStatus.OFF;
-  //     case 'AUTO':
-  //       return MicrocontrollerLightStatus.AUTO;
-  //     default:
-  //       throw Exception('Invalid light status value');
-  //   }
-  // }
-  //
-  // MicrocontrollerWaterPumpStatus _getWaterPumpStatusEnum(String value) {
-  //   switch (value) {
-  //     case 'ON':
-  //       return MicrocontrollerWaterPumpStatus.ON;
-  //     case 'OFF':
-  //       return MicrocontrollerWaterPumpStatus.OFF;
-  //     case 'AUTO':
-  //       return MicrocontrollerWaterPumpStatus.AUTO;
-  //     default:
-  //       throw Exception('Invalid water pump status value');
-  //   }
-  // }
-
-  // Future<void> _waitForSpecificSecond(List<int> seconds) async {
-  //   while (!seconds.contains(DateTime.now().second)) {
-  //     await Future.delayed(const Duration(milliseconds: 100));
-  //   }
-  // }
 
   void _setupMqttClient() async {
     mqttClient = MqttServerClient.withPort(
@@ -295,10 +110,52 @@ class GreenHouseController extends GetX.GetxController {
             MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
         print('Received message: $message from topic: ${c[0].topic}');
-        // Handle the received message here
+        _lastMessageReceivedTime = DateTime.now();
+        _updateGreenhouseDataFromMqtt(message);
       });
     } catch (e) {
       print("MQTT Connection error: $e");
+      _markMicrocontrollerInactive();
+    }
+  }
+
+  void _updateGreenhouseDataFromMqtt(String message) {
+    try {
+      final data = jsonDecode(message);
+      temperature.value = data['temperature'].toString();
+      humidity.value = data['humidity'].toString();
+      soilMoisture.value = data['soilMoisture'].toString();
+      light.value = data['actualLightIntensity'].toString();
+      _markMicrocontrollerActive();
+    } catch (e) {
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'Failed to update data from MQTT message: $e',
+          backgroundColor: Colors.red);
+    }
+  }
+
+  void _startStatusCheckTimer() {
+    _statusCheckTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      if (_lastMessageReceivedTime == null ||
+          DateTime.now().difference(_lastMessageReceivedTime!).inSeconds > 10) {
+        _markMicrocontrollerInactive();
+      }
+    });
+  }
+
+  void _markMicrocontrollerActive() {
+    if (!isActive.value) {
+      isActive.value = true;
+      SnackbarHelper.showCustomSnackbar('Info', 'Microcontroller is active.',
+          backgroundColor: Colors.green);
+    }
+  }
+
+  void _markMicrocontrollerInactive() {
+    if (isActive.value) {
+      isActive.value = false;
+      SnackbarHelper.showCustomSnackbar('Info', 'Microcontroller is inactive.',
+          backgroundColor: Colors.red);
     }
   }
 

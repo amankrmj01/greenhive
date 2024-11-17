@@ -60,39 +60,42 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
           Positioned(
             right: 20,
             top: 40,
-            child: AnimatedContainer(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: controller.isActive.value
-                    ? Colors.green.withOpacity(0.4)
-                    : Colors.red.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              duration: const Duration(milliseconds: 100),
-              height: 30,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  8.widthBox,
-                  Text(
-                    controller.isActive.value ? 'Active' : 'Inactive',
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+            child: Obx(
+              () => AnimatedContainer(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: controller.isActive.value
+                      ? Colors.green.withOpacity(0.4)
+                      : Colors.red.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                duration: const Duration(milliseconds: 100),
+                height: 30,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    8.widthBox,
+                    Text(
+                      controller.isActive.value ? 'Active' : 'Inactive',
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  8.widthBox,
-                  Container(
-                    height: 20,
-                    width: 20,
-                    decoration: BoxDecoration(
-                      color:
-                          controller.isActive.value ? Colors.green : Colors.red,
-                      shape: BoxShape.circle,
+                    8.widthBox,
+                    Container(
+                      height: 20,
+                      width: 20,
+                      decoration: BoxDecoration(
+                        color: controller.isActive.value
+                            ? Colors.green
+                            : Colors.red,
+                        shape: BoxShape.circle,
+                      ),
                     ),
-                  ),
-                  8.widthBox,
-                ],
+                    8.widthBox,
+                  ],
+                ),
               ),
             ),
           ),
