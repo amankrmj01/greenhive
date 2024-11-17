@@ -44,16 +44,8 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchGreenhouses() async {
-    debugPrint("MQTT_ENDPOINT: ${dotenv.env['MQTT_ENDPOINT']}");
-    debugPrint("CLIENT_ID: ${dotenv.env['CLIENT_ID']}");
-    debugPrint("ROOT_CA_PATH: ${dotenv.env['ROOT_CA_PATH']}");
-    debugPrint("CERT_PATH: ${dotenv.env['CERT_PATH']}");
-    debugPrint("PRIVATE_KEY_PATH: ${dotenv.env['PRIVATE_KEY_PATH']}");
-    debugPrint("PUBLISH_TOPIC: ${dotenv.env['PUBLISH_TOPIC']}");
     try {
       isLoading.value = true;
-      SnackbarHelper.showCustomSnackbar('Info', 'Fetching greenhouses...');
-
       // 1. Get current authenticated user
       final authUser = await Amplify.Auth.getCurrentUser();
       final userId = authUser.userId;

@@ -1,4 +1,3 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:greenhive/consts/images.dart';
 import 'package:greenhive/infrastructure/navigation/routes.dart';
 import 'package:greenhive/presentation/home/search_bar.dart';

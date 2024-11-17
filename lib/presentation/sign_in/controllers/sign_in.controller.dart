@@ -41,7 +41,8 @@ class SignInController extends GetxController {
       if (isSignedIn) {
         SnackbarHelper.showCustomSnackbar('Success', 'Signed in successfully',
             backgroundColor: Colors.green);
-        Get.offAllNamed(Routes.HOME);
+        Future.delayed(
+            const Duration(seconds: 2), () => Get.offAllNamed(Routes.HOME));
       } else {
         SnackbarHelper.showCustomSnackbar('Error', 'Failed to sign in',
             backgroundColor: Colors.red);
@@ -50,7 +51,8 @@ class SignInController extends GetxController {
       // Dismiss loading dialog
       Get.back();
 
-      SnackbarHelper.showCustomSnackbar('Error', 'Failed to sign in: $e',
+      SnackbarHelper.showCustomSnackbar(
+          'Failed to sign in', 'Incorrect username or password',
           backgroundColor: Colors.red);
     }
   }

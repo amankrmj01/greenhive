@@ -203,50 +203,50 @@ class GreenHouseController extends GetX.GetxController {
   //   }
   // }
 
-  MicrocontrollerFanStatus _getFanStatusEnum(String value) {
-    switch (value) {
-      case 'ON':
-        return MicrocontrollerFanStatus.ON;
-      case 'OFF':
-        return MicrocontrollerFanStatus.OFF;
-      case 'AUTO':
-        return MicrocontrollerFanStatus.AUTO;
-      default:
-        throw Exception('Invalid fan status value');
-    }
-  }
+  // MicrocontrollerFanStatus _getFanStatusEnum(String value) {
+  //   switch (value) {
+  //     case 'ON':
+  //       return MicrocontrollerFanStatus.ON;
+  //     case 'OFF':
+  //       return MicrocontrollerFanStatus.OFF;
+  //     case 'AUTO':
+  //       return MicrocontrollerFanStatus.AUTO;
+  //     default:
+  //       throw Exception('Invalid fan status value');
+  //   }
+  // }
+  //
+  // MicrocontrollerLightStatus _getLightStatusEnum(String value) {
+  //   switch (value) {
+  //     case 'ON':
+  //       return MicrocontrollerLightStatus.ON;
+  //     case 'OFF':
+  //       return MicrocontrollerLightStatus.OFF;
+  //     case 'AUTO':
+  //       return MicrocontrollerLightStatus.AUTO;
+  //     default:
+  //       throw Exception('Invalid light status value');
+  //   }
+  // }
+  //
+  // MicrocontrollerWaterPumpStatus _getWaterPumpStatusEnum(String value) {
+  //   switch (value) {
+  //     case 'ON':
+  //       return MicrocontrollerWaterPumpStatus.ON;
+  //     case 'OFF':
+  //       return MicrocontrollerWaterPumpStatus.OFF;
+  //     case 'AUTO':
+  //       return MicrocontrollerWaterPumpStatus.AUTO;
+  //     default:
+  //       throw Exception('Invalid water pump status value');
+  //   }
+  // }
 
-  MicrocontrollerLightStatus _getLightStatusEnum(String value) {
-    switch (value) {
-      case 'ON':
-        return MicrocontrollerLightStatus.ON;
-      case 'OFF':
-        return MicrocontrollerLightStatus.OFF;
-      case 'AUTO':
-        return MicrocontrollerLightStatus.AUTO;
-      default:
-        throw Exception('Invalid light status value');
-    }
-  }
-
-  MicrocontrollerWaterPumpStatus _getWaterPumpStatusEnum(String value) {
-    switch (value) {
-      case 'ON':
-        return MicrocontrollerWaterPumpStatus.ON;
-      case 'OFF':
-        return MicrocontrollerWaterPumpStatus.OFF;
-      case 'AUTO':
-        return MicrocontrollerWaterPumpStatus.AUTO;
-      default:
-        throw Exception('Invalid water pump status value');
-    }
-  }
-
-  Future<void> _waitForSpecificSecond(List<int> seconds) async {
-    while (!seconds.contains(DateTime.now().second)) {
-      await Future.delayed(const Duration(milliseconds: 100));
-    }
-  }
+  // Future<void> _waitForSpecificSecond(List<int> seconds) async {
+  //   while (!seconds.contains(DateTime.now().second)) {
+  //     await Future.delayed(const Duration(milliseconds: 100));
+  //   }
+  // }
 
   void _setupMqttClient() async {
     mqttClient = MqttServerClient.withPort(
@@ -284,6 +284,19 @@ class GreenHouseController extends GetX.GetxController {
     try {
       await mqttClient!.connect();
       print("MQTT connected successfully.");
+
+      // Subscribe to a topic
+      mqttClient!.subscribe(dotenv.env['SUBSCRIBE_TOPIC']!, MqttQos.atMostOnce);
+
+      // Set up a listener for incoming messages
+      mqttClient!.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+        final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+        final String message =
+            MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+
+        print('Received message: $message from topic: ${c[0].topic}');
+        // Handle the received message here
+      });
     } catch (e) {
       print("MQTT Connection error: $e");
     }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../auth/controllers/auth.controller.dart';
+import '../utils/password.dart';
 import '../widgets/text_area.dart';
 import 'controllers/sign_up.controller.dart';
 
@@ -29,19 +30,22 @@ class SignUpScreen extends GetView<SignUpController> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Column(
-                            children: [
-                              buildNameTextField(),
-                              const SizedBox(height: 16),
-                              buildUserNameTextField(),
-                              const SizedBox(height: 16),
-                              buildEmailTextField(),
-                              const SizedBox(height: 16),
-                              buildPasswordTextField(),
-                              const SizedBox(height: 16),
-                              buildConfirmPasswordTextField(),
-                            ],
-                          ).box.p16.make(),
+                          Form(
+                            key: controller.formKey,
+                            child: Column(
+                              children: [
+                                buildNameTextField(),
+                                const SizedBox(height: 16),
+                                buildUserNameTextField(),
+                                const SizedBox(height: 16),
+                                buildEmailTextField(),
+                                const SizedBox(height: 16),
+                                buildPasswordTextField(),
+                                const SizedBox(height: 16),
+                                buildConfirmPasswordTextField(),
+                              ],
+                            ).box.p16.make(),
+                          ),
                           const SizedBox(height: 16),
                           buildAlreadyHaveAnAccount(authScreenController),
                           const SizedBox(height: 8),
@@ -75,12 +79,14 @@ class SignUpScreen extends GetView<SignUpController> {
         maximumSize: const Size(80, 40),
       ),
       onPressed: () {
-        controller.signUpUser(
-          username: controller.username.text,
-          password: controller.password.text,
-          email: controller.email.text,
-          fullName: controller.fullName.text,
-        );
+        if (controller.formKey.currentState!.validate()) {
+          controller.signUpUser(
+            username: controller.username.text,
+            password: controller.password.text,
+            email: controller.email.text,
+            fullName: controller.fullName.text,
+          );
+        }
       },
       child: const Text('Sign Up'),
     );
@@ -94,6 +100,15 @@ class SignUpScreen extends GetView<SignUpController> {
       labelText: 'Confirm Password',
       preFixIcon: const Icon(Icons.lock),
       prefix: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please confirm your password';
+        }
+        if (value != controller.password.text) {
+          return 'Passwords do not match';
+        }
+        return null;
+      },
     );
   }
 
@@ -105,6 +120,17 @@ class SignUpScreen extends GetView<SignUpController> {
       labelText: 'Password',
       preFixIcon: const Icon(Icons.lock),
       prefix: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        String passwordValidationResult =
+            PasswordValidator.passwordStrength(value);
+        if (passwordValidationResult != 'Password is strong') {
+          return passwordValidationResult;
+        }
+        return null;
+      },
     );
   }
 
@@ -116,6 +142,15 @@ class SignUpScreen extends GetView<SignUpController> {
       labelText: 'Email',
       preFixIcon: const Icon(Icons.email),
       prefix: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your email';
+        }
+        if (!GetUtils.isEmail(value)) {
+          return 'Please enter a valid email';
+        }
+        return null;
+      },
     );
   }
 
@@ -127,6 +162,12 @@ class SignUpScreen extends GetView<SignUpController> {
       labelText: 'User Name',
       preFixIcon: const Icon(Icons.person),
       prefix: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your username';
+        }
+        return null;
+      },
     );
   }
 
@@ -138,6 +179,12 @@ class SignUpScreen extends GetView<SignUpController> {
       labelText: 'Name',
       preFixIcon: const Icon(Icons.person),
       prefix: true,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your name';
+        }
+        return null;
+      },
     );
   }
 
@@ -151,8 +198,9 @@ class SignUpScreen extends GetView<SignUpController> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            minimumSize: const Size(60, 30),
-            maximumSize: const Size(60, 30),
+            backgroundColor: Color.lerp(Colors.white, Colors.teal, 0.3),
+            minimumSize: const Size(60, 22),
+            maximumSize: const Size(60, 22),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

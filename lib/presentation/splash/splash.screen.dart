@@ -31,13 +31,18 @@ class SplashScreen extends GetView<SplashController> {
   Widget _buildLogoContainer() {
     return Container(
       height: 160,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(0),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(80),
         color: Color.lerp(Colors.red, Colors.teal, 0.7),
         boxShadow: _buildBoxShadows(),
       ),
-      child: Image.asset('assets/logo/logo.png'),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(80),
+        child: Image.asset(
+          'assets/logo/logo.png',
+        ),
+      ),
     );
   }
 

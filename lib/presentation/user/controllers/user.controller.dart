@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:greenhive/infrastructure/dal/services/aws/sign_out_service.dart';
 import 'package:greenhive/infrastructure/navigation/routes.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
+import '../../widgets/snackbar_c.dart';
 
 class UserController extends GetxController {
   final SignOutService _signOutService = GetIt.instance<SignOutService>();
@@ -31,7 +33,9 @@ class UserController extends GetxController {
           .firstWhere((attr) => attr.userAttributeKey.key == 'email')
           .value;
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load user details: $e');
+      SnackbarHelper.showCustomSnackbar(
+          'Error', 'Failed to load user details: $e',
+          backgroundColor: Colors.red);
     }
   }
 
@@ -49,7 +53,8 @@ class UserController extends GetxController {
         Get.offAllNamed(Routes.AUTH);
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      SnackbarHelper.showCustomSnackbar('Error', e.toString(),
+          backgroundColor: Colors.red);
     }
   }
 }

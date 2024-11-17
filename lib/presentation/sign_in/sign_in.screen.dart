@@ -33,12 +33,12 @@ class SignInScreen extends GetView<SignInController> {
                           textInputType: TextInputType.name,
                           controller: controller.username,
                           isObscure: false,
-                          labelText: 'Username',
+                          labelText: 'Email',
                           preFixIcon: const Icon(Icons.person),
                           prefix: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your username';
+                              return 'Please enter your email';
                             }
                             return null;
                           },
@@ -54,35 +54,46 @@ class SignInScreen extends GetView<SignInController> {
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
+                            } else if (value.length < 8) {
+                              return 'Password must be at least 8 characters';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            minimumSize: const Size(80, 40),
+                            maximumSize: const Size(80, 40),
+                          ),
                           onPressed: () {
-                            if (controller.formKey.currentState?.validate() ??
-                                false) {
-                              // Form is valid, proceed with the action
+                            if (controller.formKey.currentState!.validate()) {
+                              controller.signInUser(
+                                controller.username.text,
+                                controller.password.text,
+                              );
                             }
                           },
-                          child: const Text('Submit'),
+                          child: const Text('Sign In'),
                         ),
                       ],
                     ),
                   ).box.p16.make(),
-                  const SizedBox(height: 16),
+                  'Forgot Password?'.text.make(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      'Create Account'.text.make(),
+                      'Don\' have account?'.text.make(),
                       const SizedBox(width: 8),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
-                          minimumSize: const Size(60, 30),
-                          maximumSize: const Size(60, 30),
+                          backgroundColor:
+                              Color.lerp(Colors.white, Colors.teal, 0.3),
+                          minimumSize: const Size(60, 22),
+                          maximumSize: const Size(60, 22),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -97,25 +108,6 @@ class SignInScreen extends GetView<SignInController> {
                         child: const Text('Sign Up'),
                       ),
                     ],
-                  ),
-                  'Forgot Password?'.text.make(),
-                  const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        minimumSize: const Size(80, 40),
-                        maximumSize: const Size(80, 40),
-                      ),
-                      onPressed: () {
-                        controller.signInUser(
-                          controller.username.text,
-                          controller.password.text,
-                        );
-                      },
-                      child: const Text('Sign In'),
-                    ),
                   ),
                 ],
               )

@@ -1,24 +1,23 @@
 class PasswordValidator {
-  static bool passwordStrength(String password) {
-    if (password.length < 8) {
-      return false;
-    }
-    // if (!password.contains(RegExp(r'[A-Z]'))) {
-    //   return false;
-    // }
-    // if (!password.contains(RegExp(r'[a-z]'))) {
-    //   return false;
-    // }
-    // if (!password.contains(RegExp(r'[0-9]'))) {
-    //   return false;
-    // }
-    // if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
-    //   return false;
-    // }
-    return true;
-  }
+  static String passwordStrength(String password) {
+    String errors = '';
 
-  static bool passwordMatch(String password, String confirmPassword) {
-    return password == confirmPassword;
+    if (password.length < 8) {
+      errors += 'Password must be at least 8 characters long\n';
+    }
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors += 'Password must contain at least one uppercase letter\n';
+    }
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors += 'Password must contain at least one lowercase letter\n';
+    }
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      errors += 'Password must contain at least one digit\n';
+    }
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors += 'Password must contain at least one special character\n';
+    }
+
+    return errors.isEmpty ? 'Password is strong' : errors.trim();
   }
 }

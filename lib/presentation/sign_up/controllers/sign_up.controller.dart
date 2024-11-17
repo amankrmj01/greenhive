@@ -11,6 +11,7 @@ class SignUpController extends GetxController {
   final password = TextEditingController();
   final confirmPassword = TextEditingController();
   final email = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
   final signUpService = GetIt.instance<SignUpService>();
 
@@ -51,7 +52,8 @@ class SignUpController extends GetxController {
         SnackbarHelper.showCustomSnackbar(
             'Success', 'Sign up successful. Please enter OTP.',
             backgroundColor: Colors.green);
-        Get.toNamed(Routes.OTP);
+        Future.delayed(
+            const Duration(seconds: 2), () => Get.offAllNamed(Routes.HOME));
       } else {
         SnackbarHelper.showCustomSnackbar(
             'Error', 'Sign up failed. Please try again.',

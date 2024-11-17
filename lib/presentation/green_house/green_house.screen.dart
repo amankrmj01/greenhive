@@ -11,45 +11,89 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        controller: controller.scrollController,
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            expandedHeight: MediaQuery.of(context).size.height * 0.3,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding:
-                  const EdgeInsets.symmetric(horizontal: 36, vertical: 8),
-              title: Obx(() => _buildAppBarTitle(context)),
-              background: Image.asset(
-                Images.greenhouse02,
-                fit: BoxFit.cover,
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          CustomScrollView(
+            controller: controller.scrollController,
+            slivers: [
+              SliverAppBar(
+                pinned: true,
+                expandedHeight: MediaQuery.of(context).size.height * 0.3,
+                flexibleSpace: FlexibleSpaceBar(
+                  titlePadding:
+                      const EdgeInsets.symmetric(horizontal: 36, vertical: 8),
+                  title: Obx(() => _buildAppBarTitle(context)),
+                  background: Image.asset(
+                    Images.greenhouse02,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              SliverToBoxAdapter(
+                child: Column(
+                  children: [
+                    _climateInfo(),
+                    16.heightBox,
+                    _deviceControls(),
+                    16.heightBox,
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      onPressed: () {
+                        controller.deleteCurrentMicrocontrollerAndGreenhouse();
+                      },
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                _climateInfo(),
-                16.heightBox,
-                _deviceControls(),
-                16.heightBox,
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+          Positioned(
+            right: 20,
+            top: 40,
+            child: AnimatedContainer(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: controller.isActive.value
+                    ? Colors.green.withOpacity(0.4)
+                    : Colors.red.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              duration: const Duration(milliseconds: 100),
+              height: 30,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  8.widthBox,
+                  Text(
+                    controller.isActive.value ? 'Active' : 'Inactive',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  onPressed: () {
-                    controller.deleteCurrentMicrocontrollerAndGreenhouse();
-                  },
-                  child: Text(
-                    'Delete',
-                    style: TextStyle(color: Colors.black),
+                  8.widthBox,
+                  Container(
+                    height: 20,
+                    width: 20,
+                    decoration: BoxDecoration(
+                      color:
+                          controller.isActive.value ? Colors.green : Colors.red,
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                )
-              ],
+                  8.widthBox,
+                ],
+              ),
             ),
           ),
         ],

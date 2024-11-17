@@ -52,6 +52,7 @@ dependencies:
   amplify_datastore: ^2.5.0
   mqtt_client: ^10.5.1
   flutter_dotenv: ^5.2.1
+  drop_shadow_image: ^0.9.1
 
 dev_dependencies:
   flutter_test:
