@@ -26,14 +26,11 @@ import 'User.dart';
 
 export 'Greenhouse.dart';
 export 'Microcontroller.dart';
-export 'MicrocontrollerFanStatus.dart';
-export 'MicrocontrollerLightStatus.dart';
-export 'MicrocontrollerWaterPumpStatus.dart';
 export 'User.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "b9a1ea70be9122667bfa7ef850fa45ed";
+  String version = "7a7032eb65f0d51e265cd91eaef17d81";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [Greenhouse.schema, Microcontroller.schema, User.schema];
   @override

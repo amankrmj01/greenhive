@@ -23,6 +23,7 @@ import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart' as amplify_core;
 import 'package:collection/collection.dart';
 
+
 /** This is an auto generated class representing the User type in your schema. */
 class User extends amplify_core.Model {
   static const classType = const _UserModelType();
@@ -35,262 +36,230 @@ class User extends amplify_core.Model {
 
   @override
   getInstanceType() => classType;
-
-  @Deprecated(
-      '[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
+  
+  @Deprecated('[getId] is being deprecated in favor of custom primary key feature. Use getter [modelIdentifier] to get model identifier.')
   @override
   String getId() => modelIdentifier.serializeAsString();
-
+  
   UserModelIdentifier get modelIdentifier {
     try {
-      return UserModelIdentifier(userId: _userId!);
-    } catch (e) {
+      return UserModelIdentifier(
+        userId: _userId!
+      );
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: amplify_core.AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String get userId {
     try {
       return _userId!;
-    } catch (e) {
+    } catch(e) {
       throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion: amplify_core.AmplifyExceptionMessages
-              .codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString());
+          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
     }
   }
-
+  
   String? get name {
     return _name;
   }
-
+  
   String? get email {
     return _email;
   }
-
+  
   List<Greenhouse>? get greenhouses {
     return _greenhouses;
   }
-
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
-
+  
   amplify_core.TemporalDateTime? get updatedAt {
     return _updatedAt;
   }
-
-  const User._internal(
-      {required userId, name, email, greenhouses, createdAt, updatedAt})
-      : _userId = userId,
-        _name = name,
-        _email = email,
-        _greenhouses = greenhouses,
-        _createdAt = createdAt,
-        _updatedAt = updatedAt;
-
-  factory User(
-      {required String userId,
-      String? name,
-      String? email,
-      List<Greenhouse>? greenhouses}) {
+  
+  const User._internal({required userId, name, email, greenhouses, createdAt, updatedAt}): _userId = userId, _name = name, _email = email, _greenhouses = greenhouses, _createdAt = createdAt, _updatedAt = updatedAt;
+  
+  factory User({required String userId, String? name, String? email, List<Greenhouse>? greenhouses}) {
     return User._internal(
-        userId: userId,
-        name: name,
-        email: email,
-        greenhouses: greenhouses != null
-            ? List<Greenhouse>.unmodifiable(greenhouses)
-            : greenhouses);
+      userId: userId,
+      name: name,
+      email: email,
+      greenhouses: greenhouses != null ? List<Greenhouse>.unmodifiable(greenhouses) : greenhouses);
   }
-
+  
   bool equals(Object other) {
     return this == other;
   }
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
     return other is User &&
-        _userId == other._userId &&
-        _name == other._name &&
-        _email == other._email &&
-        DeepCollectionEquality().equals(_greenhouses, other._greenhouses);
+      _userId == other._userId &&
+      _name == other._name &&
+      _email == other._email &&
+      DeepCollectionEquality().equals(_greenhouses, other._greenhouses);
   }
-
+  
   @override
   int get hashCode => toString().hashCode;
-
+  
   @override
   String toString() {
     var buffer = new StringBuffer();
-
+    
     buffer.write("User {");
     buffer.write("userId=" + "$_userId" + ", ");
     buffer.write("name=" + "$_name" + ", ");
     buffer.write("email=" + "$_email" + ", ");
-    buffer.write("createdAt=" +
-        (_createdAt != null ? _createdAt.format() : "null") +
-        ", ");
-    buffer.write(
-        "updatedAt=" + (_updatedAt != null ? _updatedAt.format() : "null"));
+    buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
+    buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
-
+    
     return buffer.toString();
   }
-
+  
   User copyWith({String? name, String? email, List<Greenhouse>? greenhouses}) {
     return User._internal(
-        userId: userId,
-        name: name ?? this.name,
-        email: email ?? this.email,
-        greenhouses: greenhouses ?? this.greenhouses);
+      userId: userId,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      greenhouses: greenhouses ?? this.greenhouses);
   }
-
-  User copyWithModelFieldValues(
-      {ModelFieldValue<String?>? name,
-      ModelFieldValue<String?>? email,
-      ModelFieldValue<List<Greenhouse>?>? greenhouses}) {
+  
+  User copyWithModelFieldValues({
+    ModelFieldValue<String?>? name,
+    ModelFieldValue<String?>? email,
+    ModelFieldValue<List<Greenhouse>?>? greenhouses
+  }) {
     return User._internal(
-        userId: userId,
-        name: name == null ? this.name : name.value,
-        email: email == null ? this.email : email.value,
-        greenhouses:
-            greenhouses == null ? this.greenhouses : greenhouses.value);
+      userId: userId,
+      name: name == null ? this.name : name.value,
+      email: email == null ? this.email : email.value,
+      greenhouses: greenhouses == null ? this.greenhouses : greenhouses.value
+    );
   }
-
-  User.fromJson(Map<String, dynamic> json)
-      : _userId = json['userId'],
-        _name = json['name'],
-        _email = json['email'],
-        _greenhouses = json['greenhouses'] is Map
-            ? (json['greenhouses']['items'] is List
-                ? (json['greenhouses']['items'] as List)
-                    .where((e) => e != null)
-                    .map((e) =>
-                        Greenhouse.fromJson(new Map<String, dynamic>.from(e)))
-                    .toList()
-                : null)
-            : (json['greenhouses'] is List
-                ? (json['greenhouses'] as List)
-                    .where((e) => e?['serializedData'] != null)
-                    .map((e) => Greenhouse.fromJson(
-                        new Map<String, dynamic>.from(e?['serializedData'])))
-                    .toList()
-                : null),
-        _createdAt = json['createdAt'] != null
-            ? amplify_core.TemporalDateTime.fromString(json['createdAt'])
-            : null,
-        _updatedAt = json['updatedAt'] != null
-            ? amplify_core.TemporalDateTime.fromString(json['updatedAt'])
-            : null;
-
+  
+  User.fromJson(Map<String, dynamic> json)  
+    : _userId = json['userId'],
+      _name = json['name'],
+      _email = json['email'],
+      _greenhouses = json['greenhouses']  is Map
+        ? (json['greenhouses']['items'] is List
+          ? (json['greenhouses']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => Greenhouse.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['greenhouses'] is List
+          ? (json['greenhouses'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => Greenhouse.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
+      _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
+      _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
+  
   Map<String, dynamic> toJson() => {
-        'userId': _userId,
-        'name': _name,
-        'email': _email,
-        'greenhouses':
-            _greenhouses?.map((Greenhouse? e) => e?.toJson()).toList(),
-        'createdAt': _createdAt?.format(),
-        'updatedAt': _updatedAt?.format()
-      };
-
+    'userId': _userId, 'name': _name, 'email': _email, 'greenhouses': _greenhouses?.map((Greenhouse? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+  };
+  
   Map<String, Object?> toMap() => {
-        'userId': _userId,
-        'name': _name,
-        'email': _email,
-        'greenhouses': _greenhouses,
-        'createdAt': _createdAt,
-        'updatedAt': _updatedAt
-      };
+    'userId': _userId,
+    'name': _name,
+    'email': _email,
+    'greenhouses': _greenhouses,
+    'createdAt': _createdAt,
+    'updatedAt': _updatedAt
+  };
 
-  static final amplify_core.QueryModelIdentifier<UserModelIdentifier>
-      MODEL_IDENTIFIER =
-      amplify_core.QueryModelIdentifier<UserModelIdentifier>();
+  static final amplify_core.QueryModelIdentifier<UserModelIdentifier> MODEL_IDENTIFIER = amplify_core.QueryModelIdentifier<UserModelIdentifier>();
   static final USERID = amplify_core.QueryField(fieldName: "userId");
   static final NAME = amplify_core.QueryField(fieldName: "name");
   static final EMAIL = amplify_core.QueryField(fieldName: "email");
   static final GREENHOUSES = amplify_core.QueryField(
-      fieldName: "greenhouses",
-      fieldType: amplify_core.ModelFieldType(
-          amplify_core.ModelFieldTypeEnum.model,
-          ofModelName: 'Greenhouse'));
-  static var schema = amplify_core.Model.defineSchema(
-      define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
+    fieldName: "greenhouses",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'Greenhouse'));
+  static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
     modelSchemaDefinition.pluralName = "Users";
-
+    
     modelSchemaDefinition.authRules = [
       amplify_core.AuthRule(
-          authStrategy: amplify_core.AuthStrategy.PRIVATE,
-          operations: const [
-            amplify_core.ModelOperation.CREATE,
-            amplify_core.ModelOperation.UPDATE,
-            amplify_core.ModelOperation.DELETE,
-            amplify_core.ModelOperation.READ
-          ])
+        authStrategy: amplify_core.AuthStrategy.PRIVATE,
+        operations: const [
+          amplify_core.ModelOperation.CREATE,
+          amplify_core.ModelOperation.UPDATE,
+          amplify_core.ModelOperation.DELETE,
+          amplify_core.ModelOperation.READ
+        ])
     ];
-
+    
     modelSchemaDefinition.indexes = [
       amplify_core.ModelIndex(fields: const ["userId"], name: null)
     ];
-
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-        key: User.USERID,
-        isRequired: true,
-        ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string)));
-
+      key: User.USERID,
+      isRequired: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-        key: User.NAME,
-        isRequired: false,
-        ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string)));
-
+      key: User.NAME,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
-        key: User.EMAIL,
-        isRequired: false,
-        ofType: amplify_core.ModelFieldType(
-            amplify_core.ModelFieldTypeEnum.string)));
-
+      key: User.EMAIL,
+      isRequired: false,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
+    ));
+    
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
-        key: User.GREENHOUSES,
-        isRequired: false,
-        ofModelName: 'Greenhouse',
-        associatedKey: Greenhouse.USER));
-
-    modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-            fieldName: 'createdAt',
-            isRequired: false,
-            isReadOnly: true,
-            ofType: amplify_core.ModelFieldType(
-                amplify_core.ModelFieldTypeEnum.dateTime)));
-
-    modelSchemaDefinition.addField(
-        amplify_core.ModelFieldDefinition.nonQueryField(
-            fieldName: 'updatedAt',
-            isRequired: false,
-            isReadOnly: true,
-            ofType: amplify_core.ModelFieldType(
-                amplify_core.ModelFieldTypeEnum.dateTime)));
+      key: User.GREENHOUSES,
+      isRequired: false,
+      ofModelName: 'Greenhouse',
+      associatedKey: Greenhouse.USER
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'createdAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(
+      fieldName: 'updatedAt',
+      isRequired: false,
+      isReadOnly: true,
+      ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.dateTime)
+    ));
   });
 }
 
 class _UserModelType extends amplify_core.ModelType<User> {
   const _UserModelType();
-
+  
   @override
   User fromJson(Map<String, dynamic> jsonData) {
     return User.fromJson(jsonData);
   }
-
+  
   @override
   String modelName() {
     return 'User';
@@ -305,33 +274,37 @@ class UserModelIdentifier implements amplify_core.ModelIdentifier<User> {
   final String userId;
 
   /** Create an instance of UserModelIdentifier using [userId] the primary key. */
-  const UserModelIdentifier({required this.userId});
-
+  const UserModelIdentifier({
+    required this.userId});
+  
   @override
-  Map<String, dynamic> serializeAsMap() =>
-      (<String, dynamic>{'userId': userId});
-
+  Map<String, dynamic> serializeAsMap() => (<String, dynamic>{
+    'userId': userId
+  });
+  
   @override
   List<Map<String, dynamic>> serializeAsList() => serializeAsMap()
-      .entries
-      .map((entry) => (<String, dynamic>{entry.key: entry.value}))
-      .toList();
-
+    .entries
+    .map((entry) => (<String, dynamic>{ entry.key: entry.value }))
+    .toList();
+  
   @override
   String serializeAsString() => serializeAsMap().values.join('#');
-
+  
   @override
   String toString() => 'UserModelIdentifier(userId: $userId)';
-
+  
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) {
       return true;
     }
-
-    return other is UserModelIdentifier && userId == other.userId;
+    
+    return other is UserModelIdentifier &&
+      userId == other.userId;
   }
-
+  
   @override
-  int get hashCode => userId.hashCode;
+  int get hashCode =>
+    userId.hashCode;
 }

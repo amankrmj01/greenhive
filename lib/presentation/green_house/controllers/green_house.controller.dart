@@ -98,7 +98,7 @@ class GreenHouseController extends GetX.GetxController {
     // Attempt to connect
     try {
       await mqttClient!.connect();
-      print("MQTT connected successfully.");
+      safePrint("MQTT connected successfully.");
 
       // Subscribe to a topic
       mqttClient!.subscribe(dotenv.env['SUBSCRIBE_TOPIC']!, MqttQos.atMostOnce);
@@ -109,12 +109,12 @@ class GreenHouseController extends GetX.GetxController {
         final String message =
             MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-        print('Received message: $message from topic: ${c[0].topic}');
+        safePrint('Received message: $message from topic: ${c[0].topic}');
         _lastMessageReceivedTime = DateTime.now();
         _updateGreenhouseDataFromMqtt(message);
       });
     } catch (e) {
-      print("MQTT Connection error: $e");
+      safePrint("MQTT Connection error: $e");
       _markMicrocontrollerInactive();
     }
   }
@@ -178,9 +178,9 @@ class GreenHouseController extends GetX.GetxController {
           mqttPayloadKey = "ls";
           mqttPayloadValue = value == "ON" ? "1" : "0";
           break;
-        case 'fan':
+        case 'roof':
           fanStatus.value = value;
-          mqttPayloadKey = "fs";
+          mqttPayloadKey = "fc";
           mqttPayloadValue = value == "ON" ? "1" : "0";
           break;
         default:

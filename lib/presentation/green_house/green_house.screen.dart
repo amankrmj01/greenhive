@@ -47,7 +47,7 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                       onPressed: () {
                         controller.deleteCurrentMicrocontrollerAndGreenhouse();
                       },
-                      child: Text(
+                      child: const Text(
                         'Delete',
                         style: TextStyle(color: Colors.black),
                       ),
@@ -130,7 +130,8 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                         style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    const Text('Description', style: TextStyle(fontSize: 14)),
+                    Text(Get.arguments.description,
+                        style: const TextStyle(fontSize: 14)),
                   ],
                 )),
         ),
@@ -224,9 +225,9 @@ class GreenHouseScreen extends GetView<GreenHouseController> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold))
               .p16(),
           _deviceControlRow(
-            'Fan',
+            'Roof',
             controller.fanStatus,
-            (value) => controller.updateDeviceStatus(value!, 'fan'),
+            (value) => controller.updateDeviceStatus(value!, 'roof'),
           ),
           _deviceControlRow(
             'Light',

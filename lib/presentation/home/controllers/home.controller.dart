@@ -49,11 +49,12 @@ class HomeController extends GetxController {
       // 1. Get current authenticated user
       final authUser = await Amplify.Auth.getCurrentUser();
       final userId = authUser.userId;
+      safePrint('User ID: $userId');
 
       // 2. Query Greenhouses for the current user using Amplify API
       final request = ModelQueries.list(
         Greenhouse.classType,
-        where: Greenhouse.USER.eq(userId),
+        where: Greenhouse.GREENHOUSEID.eq(userId),
       );
       final response = await Amplify.API.query(request: request).response;
 
@@ -69,11 +70,6 @@ class HomeController extends GetxController {
       greenhouses.value =
           response.data?.items.whereType<Greenhouse>().toList() ?? [];
       isLoading.value = false; // Update loading state after fetching
-
-      // 4. Check the isActive status for each greenhouse
-      for (var greenhouse in greenhouses) {
-        await checkGreenhouseIsActive(greenhouse);
-      }
     } catch (e) {
       isLoading.value = false;
       SnackbarHelper.showCustomSnackbar(

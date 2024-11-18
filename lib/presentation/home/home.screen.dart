@@ -160,7 +160,7 @@ class HomeScreen extends GetView<HomeController> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: Image.asset(
-                                    Images.greenHouse,
+                                    Images.greenhouse02,
                                     width: 322,
                                     height: 120,
                                     fit: BoxFit.cover,
@@ -180,28 +180,13 @@ class HomeScreen extends GetView<HomeController> {
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold),
                                         ),
+                                        Text(
+                                          greenhouse.description!,
+                                          overflow: TextOverflow.ellipsis,
+                                        )
                                       ],
                                     ),
                                     const Spacer(),
-                                    Obx(
-                                      () => Row(
-                                        children: [
-                                          Text(controller.isActive.value),
-                                          IconButton(
-                                            onPressed: () {},
-                                            icon: CircleAvatar(
-                                              maxRadius: 8,
-                                              backgroundColor:
-                                                  controller.isActive.value ==
-                                                          'Active'
-                                                      ? Colors.green
-                                                      : Colors.red,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    16.widthBox,
                                   ],
                                 )
                               ],

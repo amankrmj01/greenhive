@@ -53,7 +53,7 @@ class SignUpController extends GetxController {
             'Success', 'Sign up successful. Please enter OTP.',
             backgroundColor: Colors.green);
         Future.delayed(
-            const Duration(seconds: 2), () => Get.offAllNamed(Routes.HOME));
+            const Duration(seconds: 2), () => Get.toNamed(Routes.OTP));
       } else {
         SnackbarHelper.showCustomSnackbar(
             'Error', 'Sign up failed. Please try again.',

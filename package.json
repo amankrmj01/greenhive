@@ -1,7 +1,7 @@
 {
   "name": "greenhive",
   "version": "1.0.0",
-  "description": "A new Flutter project.",
+  "description": "- [Overview](#overview)\r - [Features](#features)\r - [Technical Stack](#technical-stack)\r - [Setup Instructions](#setup-instructions)\r - [Usage](#usage)\r - [Code Structure](#code-structure)\r - [Contributing](#contributing)\r - [License](#license)\r - [Version](#version)",
   "main": "index.js",
   "directories": {
     "lib": "lib",
@@ -14,16 +14,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@aws-amplify/backend": "^1.6.2",
-    "@aws-amplify/backend-cli": "^1.4.1",
-    "aws-cdk": "^2.166.0",
-    "aws-cdk-lib": "^2.166.0",
+    "@aws-amplify/backend": "^1.7.0",
+    "@aws-amplify/backend-cli": "^1.4.2",
+    "aws-cdk": "^2.167.1",
+    "aws-cdk-lib": "^2.167.1",
     "constructs": "^10.4.2",
     "esbuild": "^0.24.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "aws-amplify": "^6.8.0"
+    "aws-amplify": "^6.8.2"
   }
 }

@@ -15,12 +15,14 @@ const schema = a.schema({
         .model({
             greenhouseId: a.id(),
             name: a.string(),
-            cropName: a.string(),
+            cropType: a.string(),
+            description: a.string(),
             cropTimePeriod: a.integer(),
-            isActive: a.boolean(),
             greenhouseUserId: a.id(), // Foreign key to User model (userId)
             user: a.belongsTo('User', 'greenhouseUserId'), // Reference User model using greenhouseUserId
-            microcontroller: a.hasOne('Microcontroller', 'microcontrollerGreenhouseId'), // Foreign key to Microcontroller
+
+            // Add matching hasOne relationship for Microcontroller
+            microcontroller: a.hasOne('Microcontroller', 'microcontrollerGreenhouseId'), // Reference Microcontroller
         })
         .identifier(['greenhouseId'])
         .authorization((allow) => [allow.authenticated()]),
@@ -31,8 +33,8 @@ const schema = a.schema({
             microcontrollerGreenhouseId: a.id(), // Foreign key to Greenhouse
             greenhouse: a.belongsTo('Greenhouse', 'microcontrollerGreenhouseId'), // Reference Greenhouse
 
-            // Sensor Data Fields
-            timestamp: a.timestamp(),
+            // Static fields related to the microcontroller
+            microcontrollerName: a.string(),
             publishTopic: a.string(),
             subscribeTopic: a.string(),
             rootCA: a.string(),
