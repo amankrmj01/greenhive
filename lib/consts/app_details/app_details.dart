@@ -1,5 +1,5 @@
-const appName = 'Agro Vision';
-const appVersion = '1.0.0';
+const appName = 'Green Hive';
+const appVersion = '1.3.0';
 const appDescription =
-    'Agro Vision is an app that provides information about agriculture.';
+    'Green Hive is an app that provides information about agriculture.';
 const appLogo = 'assets/images/logo.png';
