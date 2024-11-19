@@ -97,7 +97,7 @@ This project is licensed under the Creative Commons Attribution-NonCommercial 4.
 - **Android Studio Version**: 2024.2
 
 ## Contact
-For any inquiries or support, please contact [amankrmj@gmail.com].
+For any inquiries or support, please contact [email](mailto:shubhchintak7109@gmail.com).
 
 ## Screenshots
 <img src="Screenshots\v1.3.0\Splash.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="Screenshots\v1.3.0\Splash2.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="Screenshots\v1.3.0\SignIn.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="Screenshots\v1.3.0\SignUp.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="Screenshots\v1.3.0\Home.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="Screenshots\v1.3.0\AddGreenhouse.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;<img src="Screenshots\v1.3.0\GreenHouse.png" alt="Auth Screen" width="200" height="auto" />&nbsp;&nbsp;&nbsp;&nbsp;
